@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MapPin, BookOpen, Users, Heart, Phone } from "lucide-react";
+import { Clock, MapPin, BookOpen, Heart } from "lucide-react";
 
 export default function MushollaLanding() {
   const [currentTime, setCurrentTime] = useState("");
@@ -135,29 +135,29 @@ export default function MushollaLanding() {
     });
   };
 
-  const kajianSchedule = [
-    {
-      day: "Senin",
-      ustaz: "Ust. Ahmad Fauzi",
-      time: "19:30 - 21:00 WIB",
-      topic: "Tafsir Al-Quran",
-      image: "/api/placeholder/100/80",
-    },
-    {
-      day: "Rabu",
-      ustaz: "Ust. Muhammad Ridwan",
-      time: "20:00 - 21:30 WIB",
-      topic: "Fiqh Sehari-hari",
-      image: "/api/placeholder/100/80",
-    },
-    {
-      day: "Jumat",
-      ustaz: "Ust. Abdullah Hakim",
-      time: "19:00 - 20:30 WIB",
-      topic: "Akhlak dan Tasawuf",
-      image: "/api/placeholder/100/80",
-    },
-  ];
+    const kajianSchedule = [
+      {
+        day: "Senin",
+        ustaz: "Ust. Ahmad Fauzi",
+        time: "19:30 - 21:00 WIB",
+        topic: "Tafsir Al-Quran",
+        image: "/api/placeholder/100/80",
+      },
+      {
+        day: "Rabu",
+        ustaz: "Ust. Muhammad Ridwan",
+        time: "20:00 - 21:30 WIB",
+        topic: "Fiqh Sehari-hari",
+        image: "/api/placeholder/100/80",
+      },
+      {
+        day: "Jumat",
+        ustaz: "Ust. Abdullah Hakim",
+        time: "19:00 - 20:30 WIB",
+        topic: "Akhlak dan Tasawuf",
+        image: "/api/placeholder/100/80",
+      },
+    ];
 
   const slides = [
     {
@@ -240,11 +240,94 @@ export default function MushollaLanding() {
   // Don't render time-sensitive content until client-side
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white overflow-hidden">
-        {/* Static Header */}
-        <header className="relative bg-gradient-to-r from-gray-900/95 to-slate-900/95 backdrop-blur-sm border-b border-gray-700/50 p-6">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10"></div>
-          <div className="relative flex justify-between items-center max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white overflow-hidden relative">
+        {/* Static Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800"></div>
+        
+        {/* Overlay Content */}
+        <div className="relative z-10">
+          {/* Static Header */}
+          <header className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 p-6">
+            <div className="flex justify-between items-center max-w-7xl mx-auto">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center">
+                  <Heart className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                    MUSHOLLA RIYADHUS SHALIHI
+                  </h1>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <MapPin className="w-4 h-4" />
+                    <span>Taman Mutiara Cinere, Depok</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-6 py-3 rounded-xl text-2xl font-mono font-bold shadow-lg">
+                  --:--:--
+                </div>
+                <div className="text-sm text-gray-300 mt-1">Loading...</div>
+              </div>
+            </div>
+          </header>
+
+          {/* Loading Info Cards */}
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="bg-black/40 backdrop-blur-md border-gray-500/30">
+                  <CardContent className="p-6">
+                    <div className="animate-pulse">
+                      <div className="h-4 bg-gray-600 rounded w-1/2 mb-4"></div>
+                      <div className="h-8 bg-gray-600 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-600 rounded w-1/3"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Loading content */}
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-400">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white overflow-hidden relative">
+      {/* Background Slider */}
+      <div className="absolute inset-0">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === currentSlide
+                ? "opacity-100 scale-100"
+                : "opacity-0 scale-105"
+            }`}>
+            <div
+              className="w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${slide.src})` }}>
+              <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-black/60"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Overlay Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 p-6">
+          <div className="flex justify-between items-center max-w-7xl mx-auto">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white" />
@@ -262,279 +345,162 @@ export default function MushollaLanding() {
 
             <div className="text-right">
               <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-6 py-3 rounded-xl text-2xl font-mono font-bold shadow-lg">
-                --:--:--
+                {currentTime}
               </div>
-              <div className="text-sm text-gray-300 mt-1">Loading...</div>
+              <div className="text-sm text-gray-300 mt-1">{currentDate}</div>
             </div>
           </div>
         </header>
 
-        {/* Loading content */}
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-400">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white overflow-hidden">
-      {/* Header */}
-      <header className="relative bg-gradient-to-r from-gray-900/95 to-slate-900/95 backdrop-blur-sm border-b border-gray-700/50 p-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-blue-500/10"></div>
-        <div className="relative flex justify-between items-center max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
-                MUSHOLLA RIYADHUS SHALIHI
-              </h1>
-              <div className="flex items-center space-x-2 text-sm text-gray-300">
-                <MapPin className="w-4 h-4" />
-                <span>Taman Mutiara Cinere, Depok</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-right">
-            <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-6 py-3 rounded-xl text-2xl font-mono font-bold shadow-lg">
-              {currentTime}
-            </div>
-            <div className="text-sm text-gray-300 mt-1">{currentDate}</div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="flex min-h-[calc(100vh-400px)]">
-        {/* Hero/Slider Section */}
-        <div className="flex-1 relative overflow-hidden">
-          <div className="relative h-full">
-            {slides.map((slide, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                  index === currentSlide
-                    ? "opacity-100 scale-100"
-                    : "opacity-0 scale-105"
-                }`}>
-                <div
-                  className="w-full h-full bg-cover bg-center relative"
-                  style={{ backgroundImage: `url(${slide.src})` }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-transparent"></div>
-                  <div className="absolute inset-0 flex flex-col justify-between p-8">
-                    {/* Next Prayer Countdown */}
-                    <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 max-w-md">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-5 h-5 text-emerald-400" />
-                          <span className="text-lg font-semibold">
-                            Sholat Selanjutnya
-                          </span>
-                        </div>
-                        <Badge className="bg-emerald-500 hover:bg-emerald-600">
-                          {nextPrayer.name || "LOADING..."}
-                        </Badge>
-                      </div>
-                      <div className="text-3xl font-mono text-emerald-400 font-bold">
-                        {nextPrayer.remaining || "--:--:--"}
-                      </div>
-                      {nextPrayer.time && (
-                        <div className="text-sm text-gray-300 mt-2">
-                          Waktu sholat: {nextPrayer.time}
-                        </div>
-                      )}
+        {/* Main Info Cards - Overlay on Slider */}
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            {/* Next Prayer Countdown */}
+            <Card className="bg-black/40 backdrop-blur-md border-emerald-500/30">
+              <CardContent className="p-6 h-full">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-5 h-5 text-emerald-400" />
+                      <span className="text-lg font-semibold text-emerald-400">
+                        Sholat Selanjutnya
+                      </span>
                     </div>
-
-                    {/* Slide Content */}
-                    <div className="text-center">
-                      <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                        {slide.title}
-                      </h2>
-                      <p className="text-xl text-gray-200 mb-6">
-                        {slide.subtitle}
-                      </p>
+                    <Badge className="bg-emerald-500 hover:bg-emerald-600">
+                      {nextPrayer.name || "LOADING..."}
+                    </Badge>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center text-center">
+                    <div className="text-6xl font-mono text-emerald-400 font-bold mb-4 tracking-wider">
+                      {nextPrayer.remaining || "--:--:--"}
                     </div>
-
+                    {nextPrayer.time && (
+                      <div className="text-base text-gray-300 font-medium">
+                        Waktu sholat: {nextPrayer.time}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              </CardContent>
+            </Card>
 
-          {/* Slide Indicators */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentSlide
-                    ? "bg-white shadow-lg scale-125"
-                    : "bg-white/40 hover:bg-white/60"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Sidebar - Prayer Times */}
-        <div className="w-80 bg-gradient-to-b from-gray-900/95 to-slate-900/95 backdrop-blur-sm border-l border-gray-700/50 p-6 overflow-y-auto">
-          <div className="space-y-6">
             {/* Prayer Times */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-5 h-5 text-emerald-400" />
-                  <h3 className="text-lg font-semibold text-emerald-400">
-                    Jadwal Sholat
+            <Card className="bg-black/40 backdrop-blur-md border-gray-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-5 h-5 text-emerald-400" />
+                    <h3 className="text-lg font-semibold text-emerald-400">
+                      Jadwal Sholat
+                    </h3>
+                  </div>
+                  {loading && (
+                    <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {prayerTimes.length > 0 ? (
+                    prayerTimes.map((prayer, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between py-1">
+                        <span className="text-sm text-gray-300">{prayer.name}</span>
+                        <span className={`text-sm font-mono font-bold ${prayer.color}`}>
+                          {prayer.time}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-gray-400 text-sm">
+                      {loading ? "Memuat..." : "Gagal memuat jadwal"}
+                    </div>
+                  )}
+                </div>
+                <div className="mt-2 text-xs text-gray-500 text-center">
+                  Data dari MyQuran API • Wilayah Depok
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Kajian Schedule */}
+            <Card className="bg-black/40 backdrop-blur-md border-orange-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <BookOpen className="w-5 h-5 text-orange-400" />
+                  <h3 className="text-lg font-semibold text-orange-400">
+                    Kajian Rutin
                   </h3>
                 </div>
-                {loading && (
-                  <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-                )}
-              </div>
-              <div className="space-y-3">
-                {prayerTimes.length > 0 ? (
-                  prayerTimes.map((prayer, index) => (
-                    <Card
-                      key={index}
-                      className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center">
-                              <Clock className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-white">
-                                {prayer.name}
-                              </h4>
-                              <p className="text-xs text-gray-400">
-                                Taman Mutiara Cinere
-                              </p>
-                            </div>
-                          </div>
-                          <div
-                            className={`text-2xl font-mono font-bold ${prayer.color}`}>
-                            {prayer.time}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    {loading
-                      ? "Memuat jadwal sholat..."
-                      : "Gagal memuat jadwal"}
-                  </div>
-                )}
-              </div>
-              <div className="mt-3 text-xs text-gray-500 text-center">
-                Data dari MyQuran API • Wilayah Depok
-              </div>
-            </div>
-
-            {/* Community Stats */}
-            <Card className="bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border-emerald-500/30">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Users className="w-5 h-5 text-emerald-400" />
-                  <h3 className="font-semibold text-emerald-400">Komunitas</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-white">150+</div>
-                    <div className="text-xs text-gray-300">Jemaah Aktif</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-white">12</div>
-                    <div className="text-xs text-gray-300">Kajian/Bulan</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Info */}
-            <Card className="bg-gray-800/50 border-gray-700">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Phone className="w-5 h-5 text-blue-400" />
-                  <h3 className="font-semibold text-blue-400">Kontak</h3>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="text-gray-300">
-                    <span className="text-gray-400">Takmir:</span> Ust. Bayu
-                    Santoso
-                  </div>
-                  <div className="text-gray-300">
-                    <span className="text-gray-400">WA:</span> 0812-3456-7890
-                  </div>
-                  <div className="text-gray-300">
-                    <span className="text-gray-400">Email:</span>{" "}
-                    info@riyadhusshalihi.id
-                  </div>
+                <div className="space-y-3">
+                  {kajianSchedule.map((kajian, index) => (
+                    <div key={index} className="border-l-2 border-orange-400 pl-3">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs bg-orange-500/20 text-orange-300">
+                          {kajian.day}
+                        </Badge>
+                        <span className="text-xs text-gray-400">{kajian.time}</span>
+                      </div>
+                      <h4 className="text-sm font-semibold text-white">
+                        {kajian.ustaz}
+                      </h4>
+                      <p className="text-xs text-orange-400">{kajian.topic}</p>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Center Content - Slide Title */}
+        <div className="flex flex-col justify-center items-center text-center min-h-[40vh]">
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`transition-all duration-1000 ease-in-out ${
+                index === currentSlide
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-4"
+              }`}>
+              {index === currentSlide && (
+                <>
+                  <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    {slide.title}
+                  </h2>
+                  <p className="text-2xl text-gray-200 mb-6">
+                    {slide.subtitle}
+                  </p>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentSlide
+                  ? "bg-white shadow-lg scale-125"
+                  : "bg-white/40 hover:bg-white/60"
+              }`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Kajian Schedule Footer */}
-      <footer className="bg-gradient-to-r from-gray-900/95 to-slate-900/95 backdrop-blur-sm border-t border-gray-700/50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center space-x-2 mb-4">
-            <BookOpen className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-lg font-semibold text-emerald-400">
-              Jadwal Kajian Rutin
-            </h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {kajianSchedule.map((kajian, index) => (
-              <Card
-                key={index}
-                className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center">
-                      <BookOpen className="w-8 h-8 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Badge
-                          variant="secondary"
-                          className="text-xs bg-emerald-500/20 text-emerald-300">
-                          {kajian.day}
-                        </Badge>
-                        <div className="flex items-center space-x-1 text-xs text-gray-400">
-                          <Clock className="w-3 h-3" />
-                          <span>{kajian.time}</span>
-                        </div>
-                      </div>
-                      <h4 className="font-semibold text-sm text-white mb-1">
-                        {kajian.ustaz}
-                      </h4>
-                      <p className="text-sm text-emerald-400">{kajian.topic}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </footer>
-
       {/* Running Text */}
-      <div className="bg-black py-2 overflow-hidden">
+      <div className="absolute bottom-0 w-full bg-black/80 backdrop-blur-sm py-2 overflow-hidden z-20">
         <div className="relative h-6">
-          <div className="absolute whitespace-nowrap text-white text-sm animate-marquee">
+          <div className="absolute whitespace-nowrap text-white text-sm animate-marquee-smooth">
+            🕌 Selamat Datang di Musholla Riyadhus Shalihi | Taman Mutiara
+            Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
+            Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 
             🕌 Selamat Datang di Musholla Riyadhus Shalihi | Taman Mutiara
             Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
             Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱
@@ -543,16 +509,16 @@ export default function MushollaLanding() {
       </div>
 
       <style jsx>{`
-        @keyframes marquee {
+        @keyframes marquee-smooth {
           0% {
-            transform: translateX(100%);
+            transform: translateX(0);
           }
           100% {
-            transform: translateX(-100%);
+            transform: translateX(-50%);
           }
         }
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
+        .animate-marquee-smooth {
+          animation: marquee-smooth 30s linear infinite;
         }
       `}</style>
     </div>
