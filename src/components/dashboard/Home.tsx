@@ -142,10 +142,10 @@ export default function MushollaLanding() {
     const kajianSchedule = [
       {
         day: "Senin",
-        ustaz: "Ust. Ahmad Fauzi",
+        ustaz: "",
         time: "19:30 - 21:00 WIB",
-        topic: "Tafsir Al-Quran",
-        image: "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop&crop=center&q=80",
+        topic: "Penyakit Hati dan Obatnya",
+        image: "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
         description: "Memahami makna mendalam dari ayat-ayat Al-Quran dengan pendekatan tafsir modern"
       },
       {
@@ -153,7 +153,7 @@ export default function MushollaLanding() {
         ustaz: "Ust. Muhammad Ridwan",
         time: "20:00 - 21:30 WIB",
         topic: "Fiqh Sehari-hari",
-        image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=400&fit=crop&crop=center&q=80",
+        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
         description: "Pembahasan hukum Islam yang aplikatif dalam kehidupan sehari-hari"
       },
       {
@@ -161,7 +161,7 @@ export default function MushollaLanding() {
         ustaz: "Ust. Abdullah Hakim",
         time: "19:00 - 20:30 WIB",
         topic: "Akhlak dan Tasawuf",
-        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
+        image: "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop&crop=center&q=80",
         description: "Membangun karakter mulia dan mendekatkan diri kepada Allah SWT"
       },
       {
@@ -169,7 +169,7 @@ export default function MushollaLanding() {
         ustaz: "Ust. Yusuf Rahman",
         time: "16:00 - 17:30 WIB",
         topic: "Sirah Nabawiyah",
-        image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=400&fit=crop&crop=center&q=80",
+        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&h=600&fit=crop",
         description: "Mempelajari sejarah hidup Rasulullah SAW sebagai teladan umat"
       },
       {
@@ -177,7 +177,7 @@ export default function MushollaLanding() {
         ustaz: "Ust. Ibrahim Malik",
         time: "08:00 - 09:30 WIB",
         topic: "Tahfidz Al-Quran",
-        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
+        image: "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
         description: "Program menghafal Al-Quran untuk segala usia dengan metode yang mudah"
       },
     ];
@@ -186,7 +186,7 @@ export default function MushollaLanding() {
     {
       type: "image",
       src: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=800&h=600&fit=crop",
-      title: "Musholla Riyadhus Shalihi",
+      title: "Musholla Riyadhus Shalihin",
       subtitle: "Tempat Ibadah yang Nyaman dan Khusyuk",
     },
     {
@@ -269,6 +269,25 @@ export default function MushollaLanding() {
 
   // Disable browser zoom and context menu on mount
   useEffect(() => {
+    // Force zoom to 100% and prevent zoom
+    const setZoomLevel = () => {
+      // Force browser zoom to 100%
+      document.body.style.zoom = '1';
+      document.body.style.transform = 'scale(1)';
+      document.body.style.transformOrigin = 'top left';
+      
+      // Set viewport meta for mobile devices
+      let viewport = document.querySelector('meta[name="viewport"]');
+      if (!viewport) {
+        viewport = document.createElement('meta');
+        viewport.setAttribute('name', 'viewport');
+        document.head.appendChild(viewport);
+      }
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    };
+
+    setZoomLevel();
+
     // Disable right-click context menu
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -297,77 +316,170 @@ export default function MushollaLanding() {
       }
     };
 
+    // Prevent touch gestures that could cause zoom
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('wheel', handleWheel, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('wheel', handleWheel);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
     };
   }, []);
 
   // Don't render time-sensitive content until client-side
   if (!isClient) {
     return (
-      <div className="w-screen h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white overflow-hidden fixed inset-0">
-        {/* Static Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800"></div>
-        
-        {/* Overlay Content */}
-        <div className="relative z-10 h-screen flex flex-col">
-          {/* Static Header */}
-          <header className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 px-8 py-4 relative z-40 flex-shrink-0">
-            <div className="flex justify-between items-center max-w-none mx-0">
-              <div className="flex items-center space-x-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-white" />
+      <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden">
+        {/* 16:9 Static Canvas Container */}
+        <div 
+          className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white shadow-2xl"
+          style={{
+            width: '100vw',
+            height: '100vh',
+            aspectRatio: '16 / 9',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            overflow: 'hidden'
+          }}
+        >
+          {/* Static Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800"></div>
+          
+          {/* Overlay Content */}
+          <div className="relative z-10 h-full flex flex-col">
+            {/* Static Header - Fixed Height */}
+            <header 
+              className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 relative z-40 flex-shrink-0"
+              style={{ height: '100px', padding: '16px 32px' }}
+            >
+              <div className="flex justify-between items-center h-full w-full">
+                <div className="flex items-center space-x-6">
+                  <div 
+                    className="bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={{ width: '48px', height: '48px' }}
+                  >
+                    <Heart className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <h1 
+                      className="font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap"
+                      style={{ fontSize: '32px', lineHeight: '1.2' }}
+                    >
+                      MUSHOLLA RIYADHUS SHALIHIN
+                    </h1>
+                    <div 
+                      className="flex items-center space-x-2 text-gray-300"
+                      style={{ fontSize: '16px', marginTop: '4px' }}
+                    >
+                      <MapPin className="w-4 h-4" />
+                      <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
-                    MUSHOLLA RIYADHUS SHALIHIN
-                  </h1>
-                  <div className="flex items-center space-x-2 text-base text-gray-300">
-                    <MapPin className="w-4 h-4" />
-                    <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
+
+                <div className="text-right flex-shrink-0 ml-4">
+                  <div 
+                    className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-mono font-bold shadow-lg"
+                    style={{ 
+                      padding: '12px 24px', 
+                      borderRadius: '12px', 
+                      fontSize: '24px' 
+                    }}
+                  >
+                    --:--:--
+                  </div>
+                  <div 
+                    className="text-gray-300 whitespace-nowrap"
+                    style={{ fontSize: '16px', marginTop: '4px' }}
+                  >
+                    Loading...
                   </div>
                 </div>
               </div>
+            </header>
 
-              <div className="text-right flex-shrink-0 ml-4">
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-6 py-3 rounded-xl text-2xl font-mono font-bold shadow-lg">
-                  --:--:--
-                </div>
-                <div className="text-base text-gray-300 mt-1 whitespace-nowrap">Loading...</div>
+            {/* Loading Info Cards - Fixed Layout */}
+            <div 
+              className="flex-1 min-h-0"
+              style={{ padding: '24px 32px 80px' }}
+            >
+              <div 
+                className="grid grid-cols-3 gap-8 h-full"
+                style={{ height: 'calc(100vh - 180px)' }}
+              >
+                {[1, 2, 3].map((i) => (
+                  <Card key={i} className="bg-black/40 backdrop-blur-md border-gray-500/30 h-full">
+                    <CardContent 
+                      className="h-full"
+                      style={{ padding: '32px' }}
+                    >
+                      <div className="animate-pulse flex flex-col h-full">
+                        <div 
+                          className="bg-gray-600 rounded mb-6"
+                          style={{ height: '24px', width: '50%' }}
+                        ></div>
+                        <div className="flex-1 flex flex-col justify-center space-y-4">
+                          <div 
+                            className="bg-gray-600 rounded"
+                            style={{ height: '48px', width: '75%' }}
+                          ></div>
+                          <div 
+                            className="bg-gray-600 rounded"
+                            style={{ height: '32px', width: '50%' }}
+                          ></div>
+                          <div 
+                            className="bg-gray-600 rounded"
+                            style={{ height: '24px', width: '66%' }}
+                          ></div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
-          </header>
 
-          {/* Loading Info Cards */}
-          <div className="px-8 py-6 flex-1 min-h-0 pb-20">
-            <div className="grid grid-cols-3 gap-8 h-full">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="bg-black/40 backdrop-blur-md border-gray-500/30 h-full">
-                  <CardContent className="p-8 h-full">
-                    <div className="animate-pulse flex flex-col h-full">
-                      <div className="h-6 bg-gray-600 rounded w-1/2 mb-6"></div>
-                      <div className="flex-1 flex flex-col justify-center space-y-4">
-                        <div className="h-12 bg-gray-600 rounded w-3/4"></div>
-                        <div className="h-8 bg-gray-600 rounded w-1/2"></div>
-                        <div className="h-6 bg-gray-600 rounded w-2/3"></div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            {/* Loading indicator at bottom - Fixed Position */}
+            <div 
+              className="absolute text-center"
+              style={{
+                bottom: '80px',
+                left: '50%',
+                transform: 'translateX(-50%)'
+              }}
+            >
+              <div 
+                className="border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-6"
+                style={{ width: '80px', height: '80px' }}
+              ></div>
+              <p 
+                className="text-gray-400"
+                style={{ fontSize: '20px' }}
+              >
+                Loading...
+              </p>
             </div>
-          </div>
-
-          {/* Loading indicator at bottom */}
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center">
-            <div className="w-20 h-20 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-6"></div>
-            <p className="text-gray-400 text-xl">Loading...</p>
           </div>
         </div>
       </div>
@@ -404,10 +516,9 @@ export default function MushollaLanding() {
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <Heart className="w-6 h-6 text-white" />
               </div>
-              <div className="min-w-0">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
-                  MUSHOLLA RIYADHUS SHALIHI
-                </h1>
+              <div className="min-w-0">                  <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
+                    MUSHOLLA RIYADHUS SHALIHIN
+                  </h1>
                 <div className="flex items-center space-x-2 text-base text-gray-300">
                   <MapPin className="w-4 h-4" />
                   <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
@@ -519,12 +630,19 @@ export default function MushollaLanding() {
                           : "opacity-0"
                       }`}>
                       
-                      {/* Square Image Container (1:1 ratio) - Fixed height */}
-                      <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 max-h-64">
+                      {/* Square Image Container (1:1 ratio) - MAXIMUM SIZE */}
+                      <div className="relative w-full rounded-lg overflow-hidden mb-4" style={{ aspectRatio: '1 / 1', maxWidth: '100%', margin: '0 auto' }}>
                         <img
                           src={kajian.image}
                           alt={`Poster ${kajian.topic}`}
-                          className="w-full h-full object-cover object-center"
+                          className="w-full h-full"
+                          style={{ 
+                            aspectRatio: '1 / 1',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            width: '100%',
+                            height: '100%'
+                          }}
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://via.placeholder.com/400x400/f97316/ffffff?text=Kajian+Poster";
@@ -629,10 +747,10 @@ export default function MushollaLanding() {
       <div className="absolute bottom-0 w-full bg-black/80 backdrop-blur-sm py-3 overflow-hidden z-50 h-12">
         <div className="relative h-full">
           <div className="absolute whitespace-nowrap text-white text-base animate-marquee-smooth flex items-center h-full">
-            🕌 Selamat Datang di Musholla Riyadhus Shalihi | Taman Mutiara
+            🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
             Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
             Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 
-            🕌 Selamat Datang di Musholla Riyadhus Shalihi | Taman Mutiara
+            🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
             Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
             Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱
           </div>

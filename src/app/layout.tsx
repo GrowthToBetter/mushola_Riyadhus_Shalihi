@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Musholla Riyadhus Shalihi",
+  title: "Musholla Riyadhus Shalihin",
   description: "berlokasi di Taman Mutiara Cinere",
 };
 
