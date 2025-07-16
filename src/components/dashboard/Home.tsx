@@ -326,7 +326,7 @@ export default function MushollaLanding() {
                 </div>
                 <div className="min-w-0">
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
-                    MUSHOLLA RIYADHUS SHALIHI
+                    MUSHOLLA RIYADHUS SHALIHIN
                   </h1>
                   <div className="flex items-center space-x-2 text-base text-gray-300">
                     <MapPin className="w-4 h-4" />
