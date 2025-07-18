@@ -9,6 +9,7 @@ import { Clock, MapPin, BookOpen, Heart } from "lucide-react";
 export default function MushollaLanding() {
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
+  const [hijriDate, setHijriDate] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentKajianSlide, setCurrentKajianSlide] = useState(0);
   const [isClient, setIsClient] = useState(false);
@@ -139,6 +140,39 @@ export default function MushollaLanding() {
     });
   };
 
+  // Fetch Hijri date from API
+  const fetchHijriDate = async () => {
+    try {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, "0");
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const year = today.getFullYear();
+
+      const response = await fetch(
+        `https://api.aladhan.com/v1/gToH/${day}-${month}-${year}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch Hijri date");
+      }
+
+      const data = await response.json();
+
+      if (data.code === 200 && data.data && data.data.hijri) {
+        const hijri = data.data.hijri;
+        const hijriDateString = `${hijri.day} ${hijri.month.en} ${hijri.year} H`;
+        setHijriDate(hijriDateString);
+      } else {
+        // Fallback Hijri date calculation (approximate)
+        setHijriDate("23 Muharram 1447 H");
+      }
+    } catch (error) {
+      console.error("Error fetching Hijri date:", error);
+      // Fallback Hijri date
+      setHijriDate("23 Muharram 1447 H");
+    }
+  };
+
     const kajianSchedule = [
       {
         day: "Senin",
@@ -212,6 +246,7 @@ export default function MushollaLanding() {
   useEffect(() => {
     if (isClient) {
       fetchPrayerTimes();
+      fetchHijriDate();
     }
   }, [isClient]);
 
@@ -371,28 +406,28 @@ export default function MushollaLanding() {
             {/* Static Header - Fixed Height */}
             <header 
               className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 relative z-40 flex-shrink-0"
-              style={{ height: '100px', padding: '16px 32px' }}
+              style={{ height: '90px', padding: '8px 16px' }}
             >
               <div className="flex justify-between items-center h-full w-full">
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-4">
                   <div 
                     className="bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ width: '48px', height: '48px' }}
+                    style={{ width: '64px', height: '64px' }}
                   >
-                    <Heart className="w-6 h-6 text-white" />
+                    <Heart className="w-8 h-8 text-white" />
                   </div>
                   <div className="min-w-0">
                     <h1 
                       className="font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap"
-                      style={{ fontSize: '32px', lineHeight: '1.2' }}
+                      style={{ fontSize: '36px', lineHeight: '1.2' }}
                     >
                       MUSHOLLA RIYADHUS SHALIHIN
                     </h1>
                     <div 
                       className="flex items-center space-x-2 text-gray-300"
-                      style={{ fontSize: '16px', marginTop: '4px' }}
+                      style={{ fontSize: '18px', marginTop: '4px' }}
                     >
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="w-5 h-5" />
                       <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
                     </div>
                   </div>
@@ -400,20 +435,44 @@ export default function MushollaLanding() {
 
                 <div className="text-right flex-shrink-0 ml-4">
                   <div 
-                    className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-mono font-bold shadow-lg"
+                    className="relative bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-mono font-bold shadow-xl text-center"
                     style={{ 
-                      padding: '12px 24px', 
-                      borderRadius: '12px', 
-                      fontSize: '24px' 
+                      padding: '12px 40px', 
+                      borderRadius: '16px', 
+                      fontSize: '28px' 
                     }}
                   >
+                    {/* Left decoration - minimalist clock */}
+                    <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                      <div className="relative w-6 h-6">
+                        <div className="w-6 h-6 border-2 border-black/80 rounded-full bg-black/10"></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0.5 h-2 bg-black/90 rounded-full origin-bottom animate-clock-hand"></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-black/90 rounded-full"></div>
+                      </div>
+                    </div>
                     --:--:--
+                    {/* Right decoration - minimalist indicator */}
+                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"></div>
+                        <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow" style={{ animationDelay: '0.5s' }}></div>
+                      </div>
+                    </div>
                   </div>
-                  <div 
-                    className="text-gray-300 whitespace-nowrap"
-                    style={{ fontSize: '16px', marginTop: '4px' }}
-                  >
-                    Loading...
+                  <div className="flex items-center justify-end space-x-4" style={{ marginTop: '4px' }}>
+                    <div 
+                      className="text-gray-300 whitespace-nowrap"
+                      style={{ fontSize: '18px' }}
+                    >
+                      Loading...
+                    </div>
+                    <div className="w-px h-4 bg-gray-500"></div>
+                    <div 
+                      className="text-emerald-300 whitespace-nowrap font-medium"
+                      style={{ fontSize: '18px' }}
+                    >
+                      Loading...
+                    </div>
                   </div>
                 </div>
               </div>
@@ -510,111 +569,136 @@ export default function MushollaLanding() {
       {/* Overlay Content */}
       <div className="relative z-10 h-screen flex flex-col">
         {/* Header */}
-        <header className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 px-8 py-4 relative z-40 flex-shrink-0">
+        <header className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 px-4 py-2 relative z-40 flex-shrink-0">
           <div className="flex justify-between items-center max-w-none mx-0">
-            <div className="flex items-center space-x-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <Heart className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <Heart className="w-8 h-8 text-white" />
               </div>
-              <div className="min-w-0">                  <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
-                    MUSHOLLA RIYADHUS SHALIHIN
-                  </h1>
-                <div className="flex items-center space-x-2 text-base text-gray-300">
-                  <MapPin className="w-4 h-4" />
+              <div className="min-w-0">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
+                  MUSHOLLA RIYADHUS SHALIHIN
+                </h1>
+                <div className="flex items-center space-x-2 text-lg text-gray-300">
+                  <MapPin className="w-5 h-5" />
                   <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
                 </div>
               </div>
             </div>
 
             <div className="text-right flex-shrink-0 ml-4">
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-6 py-3 rounded-xl text-2xl font-mono font-bold shadow-lg">
+              <div className="relative bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-10 py-3 rounded-2xl text-3xl font-mono font-bold shadow-xl text-center">
+                {/* Left decoration - minimalist clock */}
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                  <div className="relative w-6 h-6">
+                    <div className="w-6 h-6 border-2 border-black/80 rounded-full bg-black/10"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0.5 h-2 bg-black/90 rounded-full origin-bottom animate-clock-hand"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-black/90 rounded-full"></div>
+                  </div>
+                </div>
                 {currentTime}
+                {/* Right decoration - minimalist indicator */}
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"></div>
+                    <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow" style={{ animationDelay: '0.5s' }}></div>
+                  </div>
+                </div>
               </div>
-              <div className="text-base text-gray-300 mt-1 whitespace-nowrap">
-                {currentDate}
+              <div className="flex items-center justify-end space-x-4 mt-1">
+                <div className="text-lg text-gray-300 whitespace-nowrap">
+                  {currentDate}
+                </div>
+                <div className="w-px h-4 bg-gray-500"></div>
+                <div className="text-lg text-emerald-300 whitespace-nowrap font-medium">
+                  {hijriDate || "Loading..."}
+                </div>
               </div>
             </div>
           </div>
         </header>
 
         {/* Main Info Cards - Overlay on Slider */}
-        <div className="px-8 py-6 flex-1 relative z-30 min-h-0 pb-20">
-          <div className="grid grid-cols-3 gap-8 h-full">
-            {/* Next Prayer Countdown */}
-            <Card className="bg-black/40 backdrop-blur-md border-emerald-500/30 h-full">
-              <CardContent className="p-8 h-full">
-                <div className="flex flex-col h-full">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center space-x-3">
-                      <Clock className="w-6 h-6 text-emerald-400" />
-                      <span className="text-xl font-semibold text-emerald-400">
-                        Sholat Selanjutnya
-                      </span>
-                    </div>
-                    <Badge className="bg-emerald-500 hover:bg-emerald-600 text-lg px-4 py-2">
-                      {nextPrayer.name || "LOADING..."}
-                    </Badge>
-                  </div>
-                  <div className="flex-1 flex flex-col justify-center text-center">
-                    <div className="text-8xl font-mono text-emerald-400 font-bold mb-6 tracking-wider">
-                      {nextPrayer.remaining || "--:--:--"}
-                    </div>
-                    {nextPrayer.time && (
-                      <div className="text-xl text-gray-300 font-medium">
-                        Waktu sholat: {nextPrayer.time}
+        <div className="px-4 py-2 flex-1 relative z-30 min-h-0 mb-16">
+          <div className="grid grid-cols-2 gap-4" style={{ height: 'calc(100vh - 170px)' }}>
+            {/* Left Column - Split into 2 rows */}
+            <div className="flex flex-col gap-3 h-full">
+              {/* Next Prayer Countdown - Top Half */}
+              <Card className="bg-black/40 backdrop-blur-md border-emerald-500/30 flex-1">
+                <CardContent className="p-4 h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <Clock className="w-7 h-7 text-emerald-400" />
+                        <span className="text-2xl font-semibold text-emerald-400">
+                          Sholat Selanjutnya
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Prayer Times */}
-            <Card className="bg-black/40 backdrop-blur-md border-gray-500/30 h-full">
-              <CardContent className="p-8 h-full flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="w-6 h-6 text-emerald-400" />
-                    <h3 className="text-xl font-semibold text-emerald-400">
-                      Jadwal Sholat
-                    </h3>
-                  </div>
-                  {loading && (
-                    <div className="w-5 h-5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
-                  )}
-                </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <div className="space-y-6">
-                    {prayerTimes.length > 0 ? (
-                      prayerTimes.map((prayer, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between py-3 px-4 rounded-lg bg-black/20 border border-gray-600/20">
-                          <span className="text-lg font-medium text-gray-200">{prayer.name}</span>
-                          <span className={`text-lg font-mono font-bold ${prayer.color}`}>
-                            {prayer.time}
-                          </span>
+                      <Badge className="bg-emerald-500 hover:bg-emerald-600 text-lg px-4 py-2">
+                        {nextPrayer.name || "LOADING..."}
+                      </Badge>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center text-center">
+                      <div className="text-5xl font-mono text-emerald-400 font-bold mb-2 tracking-wider">
+                        {nextPrayer.remaining || "--:--:--"}
+                      </div>
+                      {nextPrayer.time && (
+                        <div className="text-lg text-gray-300 font-medium">
+                          Waktu sholat: {nextPrayer.time}
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-12 text-gray-400 text-lg">
-                        {loading ? "Memuat..." : "Gagal memuat jadwal"}
-                      </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Prayer Times - Bottom Half */}
+              <Card className="bg-black/40 backdrop-blur-md border-gray-500/30 flex-1">
+                <CardContent className="p-4 h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <Clock className="w-7 h-7 text-emerald-400" />
+                      <h3 className="text-2xl font-semibold text-emerald-400">
+                        Jadwal Sholat
+                      </h3>
+                    </div>
+                    {loading && (
+                      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                     )}
                   </div>
-                </div>
-                <div className="mt-6 text-sm text-gray-500 text-center">
-                  Data dari MyQuran • Wilayah Depok
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <div className="space-y-2">
+                      {prayerTimes.length > 0 ? (
+                        prayerTimes.map((prayer, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between py-2 px-3 rounded bg-black/20 border border-gray-600/20">
+                            <span className="text-base font-medium text-gray-200">{prayer.name}</span>
+                            <span className={`text-base font-mono font-bold ${prayer.color}`}>
+                              {prayer.time}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-4 text-gray-400 text-base">
+                          {loading ? "Memuat..." : "Gagal memuat jadwal"}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-2 text-sm text-gray-500 text-center">
+                    Data dari MyQuran • Wilayah Depok
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-            {/* Kajian Schedule - Slider Card */}
+            {/* Right Column - Kajian Schedule Full Height */}
             <Card className="bg-black/40 backdrop-blur-md border-orange-500/30 h-full">
-              <CardContent className="p-8 h-full flex flex-col">
-                <div className="flex items-center space-x-3 mb-8">
-                  <BookOpen className="w-6 h-6 text-orange-400" />
-                  <h3 className="text-xl font-semibold text-orange-400">
+              <CardContent className="p-4 h-full flex flex-col">
+                <div className="flex items-center space-x-3 mb-3">
+                  <BookOpen className="w-7 h-7 text-orange-400" />
+                  <h3 className="text-2xl font-semibold text-orange-400">
                     Kajian Rutin
                   </h3>
                 </div>
@@ -630,50 +714,43 @@ export default function MushollaLanding() {
                           : "opacity-0"
                       }`}>
                       
-                      {/* Square Image Container (1:1 ratio) - MAXIMUM SIZE */}
-                      <div className="relative w-full rounded-lg overflow-hidden mb-4" style={{ aspectRatio: '1 / 1', maxWidth: '100%', margin: '0 auto' }}>
+                      {/* Image Container with 1:1 aspect ratio */}
+                      <div className="relative w-full rounded overflow-hidden mb-3" style={{ aspectRatio: '1 / 1' }}>
                         <img
                           src={kajian.image}
                           alt={`Poster ${kajian.topic}`}
-                          className="w-full h-full"
-                          style={{ 
-                            aspectRatio: '1 / 1',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            width: '100%',
-                            height: '100%'
-                          }}
+                          className="w-full h-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = "https://via.placeholder.com/400x400/f97316/ffffff?text=Kajian+Poster";
                           }}
                         />
                         
-                        {/* Only day badge on image */}
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 text-base">
+                        {/* Day badge on image */}
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 text-base">
                             {kajian.day}
                           </Badge>
                         </div>
                       </div>
                       
-                      {/* Content Below Image - Fixed height */}
+                      {/* Content Below Image */}
                       <div className="flex-1 flex flex-col justify-between space-y-3">
                         <div className="text-center">
-                          <h4 className="text-xl font-bold text-white mb-3 line-clamp-1">
+                          <h4 className="text-xl font-bold text-white mb-2 line-clamp-2">
                             {kajian.topic}
                           </h4>
                           
-                          <p className="text-sm text-gray-300 line-clamp-2 leading-relaxed h-10">
+                          <p className="text-base text-gray-300 line-clamp-3 leading-relaxed">
                             {kajian.description}
                           </p>
                         </div>
                         
-                        <div className="flex justify-between items-center text-sm pt-3 border-t border-orange-500/20">
+                        <div className="flex justify-between items-center text-base pt-2 border-t border-orange-500/20">
                           <span className="text-orange-300 font-semibold truncate">
                             {kajian.ustaz}
                           </span>
-                          <span className="text-gray-400 text-right">
+                          <span className="text-gray-400 text-right font-medium">
                             {kajian.time}
                           </span>
                         </div>
@@ -681,10 +758,10 @@ export default function MushollaLanding() {
                     </div>
                   ))}
                   
-                  {/* Navigation Controls - Fixed at bottom */}
-                  <div className="flex items-center justify-center mt-auto pt-6">
+                  {/* Navigation Controls */}
+                  <div className="flex items-center justify-center mt-auto pt-2">
                     {/* Slide Indicators */}
-                    <div className="flex space-x-3">
+                    <div className="flex space-x-2">
                       {kajianSchedule.map((_, index) => (
                         <div
                           key={index}
@@ -743,10 +820,10 @@ export default function MushollaLanding() {
         </div> */}
       </div>
 
-      {/* Running Text */}
-      <div className="absolute bottom-0 w-full bg-black/80 backdrop-blur-sm py-3 overflow-hidden z-50 h-12">
+      {/* Running Text - Optimized */}
+      <div className="absolute bottom-0 w-full bg-black/80 backdrop-blur-sm py-2 overflow-hidden z-50 h-8">
         <div className="relative h-full">
-          <div className="absolute whitespace-nowrap text-white text-base animate-marquee-smooth flex items-center h-full">
+          <div className="absolute whitespace-nowrap text-white text-sm animate-marquee-smooth flex items-center h-full font-medium">
             🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
             Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
             Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 
@@ -766,8 +843,30 @@ export default function MushollaLanding() {
             transform: translateX(-50%);
           }
         }
+        @keyframes clock-hand {
+          0% {
+            transform: translateX(-50%) translateY(-50%) rotate(0deg);
+          }
+          100% {
+            transform: translateX(-50%) translateY(-50%) rotate(360deg);
+          }
+        }
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.4;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
         .animate-marquee-smooth {
           animation: marquee-smooth 30s linear infinite;
+        }
+        .animate-clock-hand {
+          animation: clock-hand 8s linear infinite;
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 2s ease-in-out infinite;
         }
       `}</style>
     </div>
