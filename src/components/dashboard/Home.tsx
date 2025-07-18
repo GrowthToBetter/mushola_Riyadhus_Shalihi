@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, MapPin, BookOpen, Heart } from "lucide-react";
+import { Clock, MapPin, BookOpen, Building2 } from "lucide-react";
 
 export default function MushollaLanding() {
   const [currentTime, setCurrentTime] = useState("");
@@ -414,7 +414,7 @@ export default function MushollaLanding() {
                     className="bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ width: '64px', height: '64px' }}
                   >
-                    <Heart className="w-8 h-8 text-white" />
+                    <Building2 className="w-8 h-8 text-white" />
                   </div>
                   <div className="min-w-0">
                     <h1 
@@ -573,7 +573,7 @@ export default function MushollaLanding() {
           <div className="flex justify-between items-center max-w-none mx-0">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <Heart className="w-8 h-8 text-white" />
+                <Building2 className="w-8 h-8 text-white" />
               </div>
               <div className="min-w-0">
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap">
