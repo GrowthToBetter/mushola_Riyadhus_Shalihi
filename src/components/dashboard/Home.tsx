@@ -101,7 +101,9 @@ export default function MushollaLanding() {
     const currentTime = now.getHours() * 60 + now.getMinutes();
 
     // Skip Imsak and Syuruq for next prayer calculation
-    const mainPrayers = prayers.filter((p) => p.name !== "Imsak" && p.name !== "Syuruq");
+    const mainPrayers = prayers.filter(
+      (p) => p.name !== "Imsak" && p.name !== "Syuruq"
+    );
 
     for (let prayer of mainPrayers) {
       const [hours, minutes] = prayer.time.split(":").map(Number);
@@ -173,48 +175,58 @@ export default function MushollaLanding() {
     }
   };
 
-    const kajianSchedule = [
-      {
-        day: "Senin",
-        ustaz: "",
-        time: "19:30 - 21:00 WIB",
-        topic: "Penyakit Hati dan Obatnya",
-        image: "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
-        description: "Memahami makna mendalam dari ayat-ayat Al-Quran dengan pendekatan tafsir modern"
-      },
-      {
-        day: "Rabu",
-        ustaz: "Ust. Muhammad Ridwan",
-        time: "20:00 - 21:30 WIB",
-        topic: "Fiqh Sehari-hari",
-        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
-        description: "Pembahasan hukum Islam yang aplikatif dalam kehidupan sehari-hari"
-      },
-      {
-        day: "Jumat",
-        ustaz: "Ust. Abdullah Hakim",
-        time: "19:00 - 20:30 WIB",
-        topic: "Akhlak dan Tasawuf",
-        image: "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop&crop=center&q=80",
-        description: "Membangun karakter mulia dan mendekatkan diri kepada Allah SWT"
-      },
-      {
-        day: "Sabtu",
-        ustaz: "Ust. Yusuf Rahman",
-        time: "16:00 - 17:30 WIB",
-        topic: "Sirah Nabawiyah",
-        image: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&h=600&fit=crop",
-        description: "Mempelajari sejarah hidup Rasulullah SAW sebagai teladan umat"
-      },
-      {
-        day: "Minggu",
-        ustaz: "Ust. Ibrahim Malik",
-        time: "08:00 - 09:30 WIB",
-        topic: "Tahfidz Al-Quran",
-        image: "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
-        description: "Program menghafal Al-Quran untuk segala usia dengan metode yang mudah"
-      },
-    ];
+  const kajianSchedule = [
+    {
+      day: "Senin",
+      ustaz: "",
+      time: "19:30 - 21:00 WIB",
+      topic: "Penyakit Hati dan Obatnya",
+      image:
+        "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
+      description:
+        "Memahami makna mendalam dari ayat-ayat Al-Quran dengan pendekatan tafsir modern",
+    },
+    {
+      day: "Rabu",
+      ustaz: "Ust. Muhammad Ridwan",
+      time: "20:00 - 21:30 WIB",
+      topic: "Fiqh Sehari-hari",
+      image:
+        "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
+      description:
+        "Pembahasan hukum Islam yang aplikatif dalam kehidupan sehari-hari",
+    },
+    {
+      day: "Jumat",
+      ustaz: "Ust. Abdullah Hakim",
+      time: "19:00 - 20:30 WIB",
+      topic: "Akhlak dan Tasawuf",
+      image:
+        "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop&crop=center&q=80",
+      description:
+        "Membangun karakter mulia dan mendekatkan diri kepada Allah SWT",
+    },
+    {
+      day: "Sabtu",
+      ustaz: "Ust. Yusuf Rahman",
+      time: "16:00 - 17:30 WIB",
+      topic: "Sirah Nabawiyah",
+      image:
+        "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&h=600&fit=crop",
+      description:
+        "Mempelajari sejarah hidup Rasulullah SAW sebagai teladan umat",
+    },
+    {
+      day: "Minggu",
+      ustaz: "Ust. Ibrahim Malik",
+      time: "08:00 - 09:30 WIB",
+      topic: "Tahfidz Al-Quran",
+      image:
+        "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
+      description:
+        "Program menghafal Al-Quran untuk segala usia dengan metode yang mudah",
+    },
+  ];
 
   const slides = [
     {
@@ -291,11 +303,11 @@ export default function MushollaLanding() {
     const slideTimer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
-    
+
     const kajianTimer = setInterval(() => {
       setCurrentKajianSlide((prev) => (prev + 1) % kajianSchedule.length);
     }, 4000);
-    
+
     return () => {
       clearInterval(slideTimer);
       clearInterval(kajianTimer);
@@ -307,18 +319,21 @@ export default function MushollaLanding() {
     // Force zoom to 100% and prevent zoom
     const setZoomLevel = () => {
       // Force browser zoom to 100%
-      document.body.style.zoom = '1';
-      document.body.style.transform = 'scale(1)';
-      document.body.style.transformOrigin = 'top left';
-      
+      document.body.style.zoom = "1";
+      document.body.style.transform = "scale(1)";
+      document.body.style.transformOrigin = "top left";
+
       // Set viewport meta for mobile devices
       let viewport = document.querySelector('meta[name="viewport"]');
       if (!viewport) {
-        viewport = document.createElement('meta');
-        viewport.setAttribute('name', 'viewport');
+        viewport = document.createElement("meta");
+        viewport.setAttribute("name", "viewport");
         document.head.appendChild(viewport);
       }
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+      viewport.setAttribute(
+        "content",
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+      );
     };
 
     setZoomLevel();
@@ -333,10 +348,12 @@ export default function MushollaLanding() {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Disable F11 (fullscreen), Ctrl+Plus/Minus (zoom), F5 (refresh), etc.
       if (
-        e.key === 'F11' ||
-        e.key === 'F5' ||
-        (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) ||
-        (e.metaKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
+        e.key === "F11" ||
+        e.key === "F5" ||
+        (e.ctrlKey &&
+          (e.key === "+" || e.key === "-" || e.key === "=" || e.key === "0")) ||
+        (e.metaKey &&
+          (e.key === "+" || e.key === "-" || e.key === "=" || e.key === "0"))
       ) {
         e.preventDefault();
         return false;
@@ -364,18 +381,20 @@ export default function MushollaLanding() {
       }
     };
 
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('wheel', handleWheel, { passive: false });
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("wheel", handleWheel, { passive: false });
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('wheel', handleWheel);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
 
@@ -384,62 +403,64 @@ export default function MushollaLanding() {
     return (
       <div className="w-screen h-screen bg-black flex items-center justify-center overflow-hidden">
         {/* 16:9 Static Canvas Container */}
-        <div 
+        <div
           className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white shadow-2xl"
           style={{
-            width: '100vw',
-            height: '100vh',
-            aspectRatio: '16 / 9',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            position: 'fixed',
+            width: "100vw",
+            height: "100vh",
+            aspectRatio: "16 / 9",
+            maxWidth: "100vw",
+            maxHeight: "100vh",
+            position: "fixed",
             top: 0,
             left: 0,
-            overflow: 'hidden'
+            overflow: "hidden",
           }}
         >
           {/* Static Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800"></div>
-          
+
           {/* Overlay Content */}
           <div className="relative z-10 h-full flex flex-col">
             {/* Static Header - Fixed Height */}
-            <header 
+            <header
               className="bg-black/30 backdrop-blur-sm border-b border-gray-700/30 relative z-40 flex-shrink-0"
-              style={{ height: '90px', padding: '8px 16px' }}
+              style={{ height: "90px", padding: "8px 16px" }}
             >
               <div className="flex justify-between items-center h-full w-full">
                 <div className="flex items-center space-x-4">
-                  <div 
+                  <div
                     className="bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ width: '64px', height: '64px' }}
+                    style={{ width: "64px", height: "64px" }}
                   >
                     <Building2 className="w-8 h-8 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <h1 
+                    <h1
                       className="font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent whitespace-nowrap"
-                      style={{ fontSize: '36px', lineHeight: '1.2' }}
+                      style={{ fontSize: "36px", lineHeight: "1.2" }}
                     >
                       MUSHOLLA RIYADHUS SHALIHIN
                     </h1>
-                    <div 
+                    <div
                       className="flex items-center space-x-2 text-gray-300"
-                      style={{ fontSize: '18px', marginTop: '4px' }}
+                      style={{ fontSize: "18px", marginTop: "4px" }}
                     >
                       <MapPin className="w-5 h-5" />
-                      <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
+                      <span className="whitespace-nowrap">
+                        Taman Mutiara Cinere, Depok
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right flex-shrink-0 ml-4">
-                  <div 
+                  <div
                     className="relative bg-gradient-to-r from-yellow-400 to-orange-400 text-black font-mono font-bold shadow-xl text-center"
-                    style={{ 
-                      padding: '12px 40px', 
-                      borderRadius: '16px', 
-                      fontSize: '28px' 
+                    style={{
+                      padding: "12px 40px",
+                      borderRadius: "16px",
+                      fontSize: "28px",
                     }}
                   >
                     {/* Left decoration - minimalist clock */}
@@ -455,21 +476,27 @@ export default function MushollaLanding() {
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                       <div className="flex items-center space-x-1">
                         <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"></div>
-                        <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow" style={{ animationDelay: '0.5s' }}></div>
+                        <div
+                          className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"
+                          style={{ animationDelay: "0.5s" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-end space-x-4" style={{ marginTop: '4px' }}>
-                    <div 
+                  <div
+                    className="flex items-center justify-end space-x-4"
+                    style={{ marginTop: "4px" }}
+                  >
+                    <div
                       className="text-gray-300 whitespace-nowrap"
-                      style={{ fontSize: '18px' }}
+                      style={{ fontSize: "18px" }}
                     >
                       Loading...
                     </div>
                     <div className="w-px h-4 bg-gray-500"></div>
-                    <div 
+                    <div
                       className="text-emerald-300 whitespace-nowrap font-medium"
-                      style={{ fontSize: '18px' }}
+                      style={{ fontSize: "18px" }}
                     >
                       Loading...
                     </div>
@@ -479,37 +506,37 @@ export default function MushollaLanding() {
             </header>
 
             {/* Loading Info Cards - Fixed Layout */}
-            <div 
+            <div
               className="flex-1 min-h-0"
-              style={{ padding: '24px 32px 80px' }}
+              style={{ padding: "24px 32px 80px" }}
             >
-              <div 
+              <div
                 className="grid grid-cols-3 gap-8 h-full"
-                style={{ height: 'calc(100vh - 180px)' }}
+                style={{ height: "calc(100vh - 180px)" }}
               >
                 {[1, 2, 3].map((i) => (
-                  <Card key={i} className="bg-black/40 backdrop-blur-md border-gray-500/30 h-full">
-                    <CardContent 
-                      className="h-full"
-                      style={{ padding: '32px' }}
-                    >
+                  <Card
+                    key={i}
+                    className="bg-black/40 backdrop-blur-md border-gray-500/30 h-full"
+                  >
+                    <CardContent className="h-full" style={{ padding: "32px" }}>
                       <div className="animate-pulse flex flex-col h-full">
-                        <div 
+                        <div
                           className="bg-gray-600 rounded mb-6"
-                          style={{ height: '24px', width: '50%' }}
+                          style={{ height: "24px", width: "50%" }}
                         ></div>
                         <div className="flex-1 flex flex-col justify-center space-y-4">
-                          <div 
+                          <div
                             className="bg-gray-600 rounded"
-                            style={{ height: '48px', width: '75%' }}
+                            style={{ height: "48px", width: "75%" }}
                           ></div>
-                          <div 
+                          <div
                             className="bg-gray-600 rounded"
-                            style={{ height: '32px', width: '50%' }}
+                            style={{ height: "32px", width: "50%" }}
                           ></div>
-                          <div 
+                          <div
                             className="bg-gray-600 rounded"
-                            style={{ height: '24px', width: '66%' }}
+                            style={{ height: "24px", width: "66%" }}
                           ></div>
                         </div>
                       </div>
@@ -520,22 +547,19 @@ export default function MushollaLanding() {
             </div>
 
             {/* Loading indicator at bottom - Fixed Position */}
-            <div 
+            <div
               className="absolute text-center"
               style={{
-                bottom: '80px',
-                left: '50%',
-                transform: 'translateX(-50%)'
+                bottom: "80px",
+                left: "50%",
+                transform: "translateX(-50%)",
               }}
             >
-              <div 
+              <div
                 className="border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-6"
-                style={{ width: '80px', height: '80px' }}
+                style={{ width: "80px", height: "80px" }}
               ></div>
-              <p 
-                className="text-gray-400"
-                style={{ fontSize: '20px' }}
-              >
+              <p className="text-gray-400" style={{ fontSize: "20px" }}>
                 Loading...
               </p>
             </div>
@@ -556,10 +580,12 @@ export default function MushollaLanding() {
               index === currentSlide
                 ? "opacity-100 scale-100"
                 : "opacity-0 scale-105"
-            }`}>
+            }`}
+          >
             <div
               className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.src})` }}>
+              style={{ backgroundImage: `url(${slide.src})` }}
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-black/60"></div>
             </div>
           </div>
@@ -581,7 +607,9 @@ export default function MushollaLanding() {
                 </h1>
                 <div className="flex items-center space-x-2 text-lg text-gray-300">
                   <MapPin className="w-5 h-5" />
-                  <span className="whitespace-nowrap">Taman Mutiara Cinere, Depok</span>
+                  <span className="whitespace-nowrap">
+                    Taman Mutiara Cinere, Depok
+                  </span>
                 </div>
               </div>
             </div>
@@ -601,7 +629,10 @@ export default function MushollaLanding() {
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                   <div className="flex items-center space-x-1">
                     <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"></div>
-                    <div className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow" style={{ animationDelay: '0.5s' }}></div>
+                    <div
+                      className="w-2 h-2 bg-black/70 rounded-full animate-pulse-slow"
+                      style={{ animationDelay: "0.5s" }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -620,7 +651,10 @@ export default function MushollaLanding() {
 
         {/* Main Info Cards - Overlay on Slider */}
         <div className="px-4 py-2 flex-1 relative z-30 min-h-0 mb-16">
-          <div className="grid grid-cols-2 gap-4" style={{ height: 'calc(100vh - 170px)' }}>
+          <div
+            className="grid grid-cols-2 gap-4"
+            style={{ height: "calc(100vh - 170px)" }}
+          >
             {/* Left Column - Split into 2 rows */}
             <div className="flex flex-col gap-3 h-full">
               {/* Next Prayer Countdown - Top Half */}
@@ -666,26 +700,30 @@ export default function MushollaLanding() {
                       <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                     )}
                   </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="space-y-2">
-                      {prayerTimes.length > 0 ? (
-                        prayerTimes.map((prayer, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between py-2 px-3 rounded bg-black/20 border border-gray-600/20">
-                            <span className="text-base font-medium text-gray-200">{prayer.name}</span>
-                            <span className={`text-base font-mono font-bold ${prayer.color}`}>
-                              {prayer.time}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-4 text-gray-400 text-base">
-                          {loading ? "Memuat..." : "Gagal memuat jadwal"}
+                  <div className="flex flex-col justify-center">
+                    {prayerTimes.length > 0 ? (
+                      prayerTimes.map((prayer, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between py-0.5 xl:py-2 px-3 rounded bg-black/20 border border-gray-600/20"
+                        >
+                          <span className="text-base font-medium text-gray-200">
+                            {prayer.name}
+                          </span>
+                          <span
+                            className={`text-base font-mono font-bold ${prayer.color}`}
+                          >
+                            {prayer.time}
+                          </span>
                         </div>
-                      )}
-                    </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-400 text-base">
+                        {loading ? "Memuat..." : "Gagal memuat jadwal"}
+                      </div>
+                    )}
                   </div>
+
                   <div className="mt-2 text-sm text-gray-500 text-center">
                     Data dari MyQuran • Wilayah Depok
                   </div>
@@ -702,7 +740,7 @@ export default function MushollaLanding() {
                     Kajian Rutin
                   </h3>
                 </div>
-                
+
                 {/* Kajian Slider Container */}
                 <div className="relative flex-1 flex flex-col">
                   {kajianSchedule.map((kajian, index) => (
@@ -712,20 +750,24 @@ export default function MushollaLanding() {
                         index === currentKajianSlide
                           ? "opacity-100"
                           : "opacity-0"
-                      }`}>
-                      
+                      }`}
+                    >
                       {/* Image Container with 1:1 aspect ratio */}
-                      <div className="relative w-full rounded overflow-hidden mb-3" style={{ aspectRatio: '1 / 1' }}>
+                      <div
+                        className="relative w-full rounded overflow-hidden mb-3"
+                        style={{ aspectRatio: "1 / 1" }}
+                      >
                         <img
                           src={kajian.image}
                           alt={`Poster ${kajian.topic}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = "https://via.placeholder.com/400x400/f97316/ffffff?text=Kajian+Poster";
+                            target.src =
+                              "https://via.placeholder.com/400x400/f97316/ffffff?text=Kajian+Poster";
                           }}
                         />
-                        
+
                         {/* Day badge on image */}
                         <div className="absolute top-3 left-3">
                           <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 text-base">
@@ -733,19 +775,19 @@ export default function MushollaLanding() {
                           </Badge>
                         </div>
                       </div>
-                      
+
                       {/* Content Below Image */}
                       <div className="flex-1 flex flex-col justify-between space-y-3">
                         <div className="text-center">
                           <h4 className="text-xl font-bold text-white mb-2 line-clamp-2">
                             {kajian.topic}
                           </h4>
-                          
+
                           <p className="text-base text-gray-300 line-clamp-3 leading-relaxed">
                             {kajian.description}
                           </p>
                         </div>
-                        
+
                         <div className="flex justify-between items-center text-base pt-2 border-t border-orange-500/20">
                           <span className="text-orange-300 font-semibold truncate">
                             {kajian.ustaz}
@@ -757,7 +799,7 @@ export default function MushollaLanding() {
                       </div>
                     </div>
                   ))}
-                  
+
                   {/* Navigation Controls */}
                   <div className="flex items-center justify-center mt-auto pt-2">
                     {/* Slide Indicators */}
@@ -826,10 +868,10 @@ export default function MushollaLanding() {
           <div className="absolute whitespace-nowrap text-white text-sm animate-marquee-smooth flex items-center h-full font-medium">
             🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
             Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
-            Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 
-            🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
-            Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
-            Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱
+            Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 🕌 Selamat
+            Datang di Musholla Riyadhus Shalihin | Taman Mutiara Cinere | Kajian
+            Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari Raya Idul Adha
+            1446H | Hubungi: 0812-3456-7890 📱
           </div>
         </div>
       </div>
@@ -852,7 +894,8 @@ export default function MushollaLanding() {
           }
         }
         @keyframes pulse-slow {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 0.4;
           }
           50% {
