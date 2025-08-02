@@ -132,3 +132,19 @@ export async function getEmailAdmin() {
   const email = await prisma.admin.findMany({ select: { email: true } });
   return email;
 }
+
+export async function getAllUsers() {
+  try {
+    const users = await prisma.admin.findMany({
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        password: true,
+      },
+    });
+    return users;
+  } catch {
+    return [];
+  }
+}

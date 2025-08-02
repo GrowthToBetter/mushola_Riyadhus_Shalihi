@@ -51,20 +51,20 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="border-r bg-white dark:bg-gray-900">
-      <SidebarHeader className="p-4 flex items-center justify-center">
-        <Link href={"/"} className="text-black text-lg font-bold">
-          Admin
+    <Sidebar className="border-r bg-white dark:bg-gray-900 h-screen">
+      <SidebarHeader className="p-6 flex items-center justify-center border-b">
+        <Link href={"/"} className="text-black dark:text-white text-xl font-bold">
+          Admin Panel
         </Link>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-blue-600 font-medium px-4">
-            Menu
+          <SidebarGroupLabel className="text-blue-600 dark:text-blue-400 font-medium px-3 mb-2">
+            Menu Utama
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -75,21 +75,21 @@ export function AppSidebar() {
                       asChild
                       isActive={isActive}
                       className={cn(
-                        "transition-colors py-3",
+                        "transition-all duration-200 rounded-lg mx-1",
                         isActive
-                          ? "bg-blue-50 text-blue-600 border-l-4 border-blue-600"
-                          : "hover:bg-gray-100"
+                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-l-4 border-blue-600 dark:border-blue-400"
+                          : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                       )}>
-                      <Link href={item.href} className="flex items-center px-4">
+                      <Link href={item.href} className="flex items-center px-3 py-2 w-full">
                         <Icon
                           className={cn(
-                            "h-5 w-5",
+                            "h-5 w-5 mr-3",
                             isActive
                               ? "text-blue-600 dark:text-blue-400"
                               : "text-gray-500 dark:text-gray-400"
                           )}
                         />
-                        <span className="ml-3 font-medium">{item.label}</span>
+                        <span className="font-medium">{item.label}</span>
                         {isActive && (
                           <ChevronRight className="h-4 w-4 ml-auto text-blue-600 dark:text-blue-400" />
                         )}
@@ -102,18 +102,19 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t">
+      
+      <SidebarFooter className="border-t p-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+              className="rounded-lg mx-1 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
               <Button
                 onClick={handleLogout}
-                variant={"outline"}
-                className="flex items-center px-4 text-red-600 dark:text-red-400">
-                <LogOut className="h-5 w-5" />
-                <span className="ml-3 font-medium">Keluar</span>
+                variant={"ghost"}
+                className="flex items-center px-3 py-2 w-full text-red-600 dark:text-red-400 justify-start">
+                <LogOut className="h-5 w-5 mr-3" />
+                <span className="font-medium">Keluar</span>
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
