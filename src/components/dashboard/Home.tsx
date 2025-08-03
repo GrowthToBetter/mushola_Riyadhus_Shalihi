@@ -5,6 +5,18 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, MapPin, BookOpen, Building2 } from "lucide-react";
+import { getKajian } from "@/utils/kajianServerAction";
+
+// Import the KajianItem type from the server action
+export interface KajianItem {
+  id?: string;
+  day: "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu" | "Minggu";
+  ustaz: string;
+  timeStart: string;
+  timeEnd: string;
+  topic: string;
+  image: string | null;
+}
 
 export default function MushollaLanding() {
   const [currentTime, setCurrentTime] = useState("");
@@ -17,11 +29,49 @@ export default function MushollaLanding() {
     { name: string; time: string; color: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [kajianSchedule, setKajianSchedule] = useState<KajianItem[]>([]);
+  const [kajianLoading, setKajianLoading] = useState(true);
   const [nextPrayer, setNextPrayer] = useState({
     name: "",
     time: "",
     remaining: "",
   });
+
+  // Fetch kajian data from database
+  const fetchKajianData = async () => {
+    try {
+      setKajianLoading(true);
+      const data = await getKajian();
+
+      // Transform the data to match the expected format
+      const transformedData = data.map((kajian) => ({
+        ...kajian,
+        time: `${kajian.timeStart} - ${kajian.timeEnd} WIB`,
+        description: `Kajian ${kajian.topic} bersama ${kajian.ustaz}`,
+        image:
+          kajian.image ||
+          "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
+      }));
+
+      setKajianSchedule(transformedData);
+    } catch (error) {
+      console.error("Failed to fetch kajian data:", error);
+      // Fallback to some default data if fetch fails
+      setKajianSchedule([
+        {
+          day: "Senin",
+          ustaz: "Ustaz Belum Ditentukan",
+          timeStart: "19:30",
+          timeEnd: "21:00",
+          topic: "Kajian Rutin",
+          image:
+            "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
+        },
+      ]);
+    } finally {
+      setKajianLoading(false);
+    }
+  };
 
   // Fetch prayer times from API
   const fetchPrayerTimes = async () => {
@@ -175,59 +225,6 @@ export default function MushollaLanding() {
     }
   };
 
-  const kajianSchedule = [
-    {
-      day: "Senin",
-      ustaz: "",
-      time: "19:30 - 21:00 WIB",
-      topic: "Penyakit Hati dan Obatnya",
-      image:
-        "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
-      description:
-        "Memahami makna mendalam dari ayat-ayat Al-Quran dengan pendekatan tafsir modern",
-    },
-    {
-      day: "Rabu",
-      ustaz: "Ust. Muhammad Ridwan",
-      time: "20:00 - 21:30 WIB",
-      topic: "Fiqh Sehari-hari",
-      image:
-        "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80",
-      description:
-        "Pembahasan hukum Islam yang aplikatif dalam kehidupan sehari-hari",
-    },
-    {
-      day: "Jumat",
-      ustaz: "Ust. Abdullah Hakim",
-      time: "19:00 - 20:30 WIB",
-      topic: "Akhlak dan Tasawuf",
-      image:
-        "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=400&fit=crop&crop=center&q=80",
-      description:
-        "Membangun karakter mulia dan mendekatkan diri kepada Allah SWT",
-    },
-    {
-      day: "Sabtu",
-      ustaz: "Ust. Yusuf Rahman",
-      time: "16:00 - 17:30 WIB",
-      topic: "Sirah Nabawiyah",
-      image:
-        "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=800&h=600&fit=crop",
-      description:
-        "Mempelajari sejarah hidup Rasulullah SAW sebagai teladan umat",
-    },
-    {
-      day: "Minggu",
-      ustaz: "Ust. Ibrahim Malik",
-      time: "08:00 - 09:30 WIB",
-      topic: "Tahfidz Al-Quran",
-      image:
-        "https://res.cloudinary.com/dpv5uxesk/image/upload/v1752649242/WhatsApp_Image_2025-07-15_at_16.04.35_7c49c89a_co3bkw.jpg",
-      description:
-        "Program menghafal Al-Quran untuk segala usia dengan metode yang mudah",
-    },
-  ];
-
   const slides = [
     {
       type: "image",
@@ -254,11 +251,12 @@ export default function MushollaLanding() {
     setIsClient(true);
   }, []);
 
-  // Fetch prayer times on mount
+  // Fetch all data on mount
   useEffect(() => {
     if (isClient) {
       fetchPrayerTimes();
       fetchHijriDate();
+      fetchKajianData();
     }
   }, [isClient]);
 
@@ -313,6 +311,17 @@ export default function MushollaLanding() {
       clearInterval(kajianTimer);
     };
   }, [isClient, slides.length, kajianSchedule.length]);
+
+  // Refresh kajian data periodically (every 5 minutes)
+  useEffect(() => {
+    if (!isClient) return;
+
+    const kajianRefreshTimer = setInterval(() => {
+      fetchKajianData();
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => clearInterval(kajianRefreshTimer);
+  }, [isClient]);
 
   // Disable browser zoom and context menu on mount
   useEffect(() => {
@@ -705,7 +714,7 @@ export default function MushollaLanding() {
                       prayerTimes.map((prayer, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between py-0.5 xl:py-2 px-3 rounded bg-black/20 border border-gray-600/20"
+                          className="flex items-center justify-between py-0.5 2xl:py-2 px-3 rounded bg-black/20 border border-gray-600/20"
                         >
                           <span className="text-base font-medium text-gray-200">
                             {prayer.name}
@@ -734,144 +743,155 @@ export default function MushollaLanding() {
             {/* Right Column - Kajian Schedule Full Height */}
             <Card className="bg-black/40 backdrop-blur-md border-orange-500/30 h-full">
               <CardContent className="p-4 h-full flex flex-col">
-                <div className="flex items-center space-x-3 mb-3">
-                  <BookOpen className="w-7 h-7 text-orange-400" />
-                  <h3 className="text-2xl font-semibold text-orange-400">
-                    Kajian Rutin
-                  </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <BookOpen className="w-7 h-7 text-orange-400" />
+                    <h3 className="text-2xl font-semibold text-orange-400">
+                      Kajian Rutin
+                    </h3>
+                  </div>
+                  {kajianLoading && (
+                    <div className="w-6 h-6 border-2 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
+                  )}
                 </div>
 
                 {/* Kajian Slider Container */}
                 <div className="relative flex-1 flex flex-col">
-                  {kajianSchedule.map((kajian, index) => (
-                    <div
-                      key={index}
-                      className={`absolute inset-0 flex flex-col transition-all duration-1000 ease-in-out ${
-                        index === currentKajianSlide
-                          ? "opacity-100"
-                          : "opacity-0"
-                      }`}
-                    >
-                      {/* Image Container with 1:1 aspect ratio */}
+                  {kajianSchedule.length > 0 ? (
+                    kajianSchedule.map((kajian, index) => (
                       <div
-                        className="relative w-full rounded overflow-hidden mb-3"
-                        style={{ aspectRatio: "1 / 1" }}
+                        key={index}
+                        className={`absolute inset-0 flex flex-col transition-all duration-1000 ease-in-out ${
+                          index === currentKajianSlide
+                            ? "opacity-100"
+                            : "opacity-0"
+                        }`}
                       >
-                        <img
-                          src={kajian.image}
-                          alt={`Poster ${kajian.topic}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src =
-                              "https://via.placeholder.com/400x400/f97316/ffffff?text=Kajian+Poster";
-                          }}
-                        />
+                        {/* Image Container with 1:1 aspect ratio */}
+                        <div
+                          className="relative w-full rounded overflow-hidden mb-3"
+                          style={{ aspectRatio: "1 / 1" }}
+                        >
+                          {kajian.image &&
+                          (kajian.image.startsWith("http") ||
+                            kajian.image.startsWith("https")) ? (
+                            // Use regular img for external URLs
+                            <img
+                              src={kajian.image}
+                              alt={`Poster ${kajian.topic}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src =
+                                  "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=400&fit=crop&crop=center&q=80";
+                              }}
+                            />
+                          ) : (
+                            // Use placeholder for missing images
+                            <div className="w-full h-full bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center">
+                              <BookOpen className="w-16 h-16 text-orange-400/60" />
+                            </div>
+                          )}
 
-                        {/* Day badge on image */}
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 text-base">
-                            {kajian.day}
-                          </Badge>
+                          {/* Day badge on image */}
+                          <div className="absolute top-3 left-3">
+                            <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 text-base">
+                              {kajian.day}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Content Below Image */}
+                        <div className="flex-1 flex flex-col justify-between space-y-3">
+                          <div className="text-center">
+                            <h4 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                              {kajian.topic}
+                            </h4>
+
+                            <p className="text-base text-gray-300 line-clamp-3 leading-relaxed">
+                              {`Kajian ${kajian.topic} bersama ${kajian.ustaz}`}
+                            </p>
+                          </div>
+
+                          <div className="flex justify-between items-center text-base pt-2 border-t border-orange-500/20">
+                            <span className="text-orange-300 font-semibold truncate">
+                              {kajian.ustaz || "Ustaz akan diumumkan"}
+                            </span>
+                            <span className="text-gray-400 text-right font-medium">
+                              {`${kajian.timeStart} - ${kajian.timeEnd} WIB`}
+                            </span>
+                          </div>
                         </div>
                       </div>
-
-                      {/* Content Below Image */}
-                      <div className="flex-1 flex flex-col justify-between space-y-3">
-                        <div className="text-center">
-                          <h4 className="text-xl font-bold text-white mb-2 line-clamp-2">
-                            {kajian.topic}
-                          </h4>
-
-                          <p className="text-base text-gray-300 line-clamp-3 leading-relaxed">
-                            {kajian.description}
-                          </p>
-                        </div>
-
-                        <div className="flex justify-between items-center text-base pt-2 border-t border-orange-500/20">
-                          <span className="text-orange-300 font-semibold truncate">
-                            {kajian.ustaz}
-                          </span>
-                          <span className="text-gray-400 text-right font-medium">
-                            {kajian.time}
-                          </span>
-                        </div>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <BookOpen className="w-16 h-16 text-orange-400/60 mb-4" />
+                      <p className="text-lg text-gray-400 mb-2">
+                        {kajianLoading
+                          ? "Memuat jadwal kajian..."
+                          : "Belum ada jadwal kajian"}
+                      </p>
+                      {!kajianLoading && (
+                        <p className="text-sm text-gray-500">
+                          Silakan tambahkan jadwal kajian di panel admin
+                        </p>
+                      )}
                     </div>
-                  ))}
+                  )}
 
                   {/* Navigation Controls */}
-                  <div className="flex items-center justify-center mt-auto pt-2">
-                    {/* Slide Indicators */}
-                    <div className="flex space-x-2">
-                      {kajianSchedule.map((_, index) => (
-                        <div
-                          key={index}
-                          className={`w-3 h-3 rounded-full transition-all ${
-                            index === currentKajianSlide
-                              ? "bg-orange-400 scale-125"
-                              : "bg-white/40"
-                          }`}
-                        />
-                      ))}
+                  {kajianSchedule.length > 0 && (
+                    <div className="flex items-center justify-center mt-auto pt-2">
+                      {/* Slide Indicators */}
+                      <div className="flex space-x-2">
+                        {kajianSchedule.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`w-3 h-3 rounded-full transition-all ${
+                              index === currentKajianSlide
+                                ? "bg-orange-400 scale-125"
+                                : "bg-white/40"
+                            }`}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
-
-        {/* Center Content - Slide Title
-        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 text-center z-10">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`transition-all duration-1000 ease-in-out ${
-                index === currentSlide
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
-              }`}>
-              {index === currentSlide && (
-                <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/10">
-                  <h2 className="text-lg font-medium mb-1 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    {slide.title}
-                  </h2>
-                  <p className="text-sm text-gray-300 font-light">
-                    {slide.subtitle}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div> */}
-
-        {/* Slide Indicators */}
-        {/* <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-15">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentSlide
-                  ? "bg-white shadow-lg scale-125"
-                  : "bg-white/40 hover:bg-white/60"
-              }`}
-            />
-          ))}
-        </div> */}
       </div>
 
-      {/* Running Text - Optimized */}
+      {/* Running Text - Enhanced with dynamic kajian info */}
       <div className="absolute bottom-0 w-full bg-black/80 backdrop-blur-sm py-2 overflow-hidden z-50 h-8">
         <div className="relative h-full">
           <div className="absolute whitespace-nowrap text-white text-sm animate-marquee-smooth flex items-center h-full font-medium">
             🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
-            Cinere | Kajian Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari
-            Raya Idul Adha 1446H | Hubungi: 0812-3456-7890 📱 | 🕌 Selamat
-            Datang di Musholla Riyadhus Shalihin | Taman Mutiara Cinere | Kajian
-            Rutin: Senin - Rabu - Jumat | Info: Persiapan Hari Raya Idul Adha
-            1446H | Hubungi: 0812-3456-7890 📱
+            Cinere |
+            {kajianSchedule.length > 0 && (
+              <>
+                {" "}
+                Kajian Rutin: {kajianSchedule
+                  .map((k) => k.day)
+                  .join(" - ")} |{" "}
+              </>
+            )}
+            Info: Persiapan Hari Raya Idul Adha 1446H | Hubungi: 0812-3456-7890
+            📱 | 🕌 Selamat Datang di Musholla Riyadhus Shalihin | Taman Mutiara
+            Cinere |
+            {kajianSchedule.length > 0 && (
+              <>
+                {" "}
+                Kajian Rutin: {kajianSchedule
+                  .map((k) => k.day)
+                  .join(" - ")} |{" "}
+              </>
+            )}
+            Info: Persiapan Hari Raya Idul Adha 1446H | Hubungi: 0812-3456-7890
+            📱
           </div>
         </div>
       </div>
@@ -910,6 +930,18 @@ export default function MushollaLanding() {
         }
         .animate-pulse-slow {
           animation: pulse-slow 2s ease-in-out infinite;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       `}</style>
     </div>

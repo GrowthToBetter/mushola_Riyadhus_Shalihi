@@ -14,3 +14,25 @@ model Admin {
   username String
   password String
 }
+
+model Kajian {
+  id        String   @id @default(uuid())
+  topic     String
+  ustaz     String
+  image     String?
+  day       day
+  timeStart String
+  timeEnd   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum day {
+  Senin
+  Selasa
+  Rabu
+  Kamis
+  Jumat
+  Sabtu
+  Minggu
+}

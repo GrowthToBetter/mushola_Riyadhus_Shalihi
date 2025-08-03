@@ -1,52 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Loader2, Save, RefreshCw } from "lucide-react"
-import { toast } from "sonner"
+import { useState, useEffect } from "react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Save, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 interface PrayerTime {
-  name: string
-  time: string
+  name: string;
+  time: string;
 }
 
 interface PrayerData {
-  date: string
-  prayers: PrayerTime[]
+  date: string;
+  prayers: PrayerTime[];
 }
 
 export function PrayerSchedule() {
-  const [useApi, setUseApi] = useState(true)
-  const [loading, setLoading] = useState(false)
-  const [prayerData, setPrayerData] = useState<PrayerData | null>(null)
+  const [useApi, setUseApi] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [prayerData, setPrayerData] = useState<PrayerData | null>(null);
   const [manualTimes, setManualTimes] = useState<PrayerTime[]>([
     { name: "Subuh", time: "04:30" },
     { name: "Dzuhur", time: "12:00" },
     { name: "Ashar", time: "15:30" },
     { name: "Maghrib", time: "18:00" },
-    { name: "Isya", time: "19:30" },  ])
+    { name: "Isya", time: "19:30" },
+  ]);
 
   const fetchPrayerTimes = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const today = new Date()
-      const year = today.getFullYear()
-      const month = String(today.getMonth() + 1).padStart(2, "0")
-      const day = String(today.getDate()).padStart(2, "0")
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
 
-      const response = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1634/${year}/${month}/${day}`)
+      const response = await fetch(
+        `https://api.myquran.com/v2/sholat/jadwal/1634/${year}/${month}/${day}`
+      );
 
-      if (!response.ok) throw new Error("Failed to fetch prayer times")
+      if (!response.ok) throw new Error("Failed to fetch prayer times");
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.status && data.data && data.data.jadwal) {
-        const jadwal = data.data.jadwal
+        const jadwal = data.data.jadwal;
         setPrayerData({
           date: `${day}/${month}/${year}`,
           prayers: [
@@ -57,32 +60,33 @@ export function PrayerSchedule() {
             { name: "Isya", time: jadwal.isya },
           ],
         });
-        toast.success("Jadwal sholat berhasil diperbarui dari API")
-      }    } catch (error) {
-      console.error("Error fetching prayer times:", error)
-      toast.error("Gagal mengambil jadwal sholat dari API")
+        toast.success("Jadwal sholat berhasil diperbarui dari API");
+      }
+    } catch (error) {
+      console.error("Error fetching prayer times:", error);
+      toast.error("Gagal mengambil jadwal sholat dari API");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (useApi) {
-      fetchPrayerTimes()
+      fetchPrayerTimes();
     }
-  }, [useApi])
+  }, [useApi]);
 
   const handleManualTimeChange = (index: number, time: string) => {
-    const updated = [...manualTimes]
-    updated[index].time = time
-    setManualTimes(updated)
-  }
+    const updated = [...manualTimes];
+    updated[index].time = time;
+    setManualTimes(updated);
+  };
   const saveManualTimes = () => {
     // Simulate saving to backend
-    toast.success("Jadwal sholat manual berhasil disimpan")
-  }
+    toast.success("Jadwal sholat manual berhasil disimpan");
+  };
 
-  const currentTimes = useApi ? prayerData?.prayers : manualTimes
+  const currentTimes = useApi ? prayerData?.prayers : manualTimes;
 
   return (
     <div className="space-y-6">
@@ -97,10 +101,23 @@ export function PrayerSchedule() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Switch id="api-toggle" checked={useApi} onCheckedChange={setUseApi} />
+          <Switch
+            id="api-toggle"
+            checked={useApi}
+            onCheckedChange={setUseApi}
+          />
           {useApi && (
-            <Button variant="outline" size="sm" onClick={fetchPrayerTimes} disabled={loading}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchPrayerTimes}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
             </Button>
           )}
         </div>
@@ -108,8 +125,12 @@ export function PrayerSchedule() {
 
       {/* Status Badge */}
       <div className="flex items-center gap-2">
-        <Badge variant={useApi ? "default" : "secondary"}>{useApi ? "Mode API" : "Mode Manual"}</Badge>
-        {prayerData && useApi && <Badge variant="outline">Tanggal: {prayerData.date}</Badge>}
+        <Badge variant={useApi ? "default" : "secondary"}>
+          {useApi ? "Mode API" : "Mode Manual"}
+        </Badge>
+        {prayerData && useApi && (
+          <Badge variant="outline">Tanggal: {prayerData.date}</Badge>
+        )}
       </div>
 
       {/* Prayer Times Display/Edit */}
@@ -117,12 +138,14 @@ export function PrayerSchedule() {
         // API Mode - Display Only
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {currentTimes?.map((prayer, index) => (
-            <Card key={index}>
-              <CardHeader className="pb-2">
+            <Card key={index} className="py-4">
+              <CardHeader className="">
                 <CardTitle className="text-lg">{prayer.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{prayer.time}</div>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {prayer.time}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -140,7 +163,9 @@ export function PrayerSchedule() {
                   <Input
                     type="time"
                     value={prayer.time}
-                    onChange={(e) => handleManualTimeChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleManualTimeChange(index, e.target.value)
+                    }
                     className="text-lg font-semibold"
                   />
                 </CardContent>
@@ -149,7 +174,10 @@ export function PrayerSchedule() {
           </div>
 
           <div className="flex justify-end">
-            <Button onClick={saveManualTimes} className="flex items-center gap-2">
+            <Button
+              onClick={saveManualTimes}
+              className="flex items-center gap-2"
+            >
               <Save className="h-4 w-4" />
               Simpan Jadwal Manual
             </Button>
@@ -164,5 +192,5 @@ export function PrayerSchedule() {
         </div>
       )}
     </div>
-  )
+  );
 }

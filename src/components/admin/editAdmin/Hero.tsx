@@ -38,9 +38,14 @@ import {
   Plus,
   Eye,
   EyeOff,
+  Shield,
 } from "lucide-react";
 import { Prisma } from "@prisma/client";
-import { addUser, deleteAdminData, updateUser } from "@/utils/userGetServerAction";
+import {
+  addUser,
+  deleteAdminData,
+  updateUser,
+} from "@/utils/userGetServerAction";
 
 // Type untuk Admin berdasarkan model Prisma
 type Admin = Prisma.AdminGetPayload<{}>;
@@ -52,7 +57,7 @@ export interface AdminForm {
   password: string;
 }
 
-export default function AdminTable({ adminData }: { adminData: Admin[] }) {
+export default function Hero({ adminData }: { adminData: Admin[] }) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -78,22 +83,28 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
 
   const addAdmin = async (data: AdminForm) => {
     setIsAdding(true);
+    setSearchTerm("");
     const toastId = toast.loading("Menambahkan admin...");
 
     try {
-      // Simulate API call - replace with actual API call
+      const result = await addUser(data);
 
-      await addUser(data); // Uncomment when API is ready
-
-      toast.success("Admin berhasil ditambahkan", { id: toastId });
-      setAddDialogOpen(false);
-      setAddForm({
-        email: "",
-        username: "",
-        password: "",
-      });
-    } catch {
-      toast.error("Gagal menambahkan admin", { id: toastId });
+      if (result.status === 201) {
+        toast.success(result.message, { id: toastId });
+        setAddDialogOpen(false);
+        setAddForm({
+          email: "",
+          username: "",
+          password: "",
+        });
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        toast.error(result.message, { id: toastId });
+      }
+    } catch (error) {
+      console.error("Error adding admin:", error);
+      toast.error("Terjadi kesalahan saat menambahkan admin", { id: toastId });
     } finally {
       setIsAdding(false);
     }
@@ -104,11 +115,18 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
     const toastId = toast.loading("Menghapus admin...");
 
     try {
-      // Simulate API call - replace with actual API call
-      await deleteAdminData(id); // Uncomment when API is ready
-      toast.success("Admin berhasil dihapus", { id: toastId });
-    } catch {
-      toast.error("Gagal menghapus admin", { id: toastId });
+      const result = await deleteAdminData(id);
+
+      if (result.status === 200) {
+        toast.success(result.message, { id: toastId });
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        toast.error(result.message, { id: toastId });
+      }
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+      toast.error("Terjadi kesalahan saat menghapus admin", { id: toastId });
     } finally {
       setIsDeleting(null);
     }
@@ -119,15 +137,20 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
     const toastId = toast.loading("Mengupdate admin...");
 
     try {
-      // Simulate API call - replace with actual API call
+      const result = await updateUser(data, id);
 
-      await updateUser(data, id); // Uncomment when API is ready
-
-      toast.success("Admin berhasil diupdate", { id: toastId });
-      setEditDialogOpen(false);
-      setEditingAdmin(null);
-    } catch {
-      toast.error("Gagal mengupdate admin", { id: toastId });
+      if (result.status === 200) {
+        toast.success(result.message, { id: toastId });
+        setEditDialogOpen(false);
+        setEditingAdmin(null);
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        toast.error(result.message, { id: toastId });
+      }
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      toast.error("Terjadi kesalahan saat mengupdate admin", { id: toastId });
     } finally {
       setIsUpdating(null);
     }
@@ -163,6 +186,10 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
   // Filter admins
   const filteredAdmins = adminData.filter((admin) => {
     const matchesSearch =
@@ -174,10 +201,71 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
 
   const totalAdmins = adminData.length;
 
+  // Check if admin is default admin (assuming we have env var for default admin email)
+  const isDefaultAdmin = (email: string) => {
+    return (
+      email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN ||
+      email === "admin@gmail.com"
+    );
+  };
+
   return (
     <div className="w-full space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+          <CardContent className="py-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <User className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Admin</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {totalAdmins}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="py-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Shield className="h-6 w-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Admin Aktif</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {totalAdmins}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="py-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Search className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Hasil Filter
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {filteredAdmins.length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Main Table */}
-      <Card>
+      <Card className="py-4">
         <CardHeader>
           {/* Header with Add Button */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -193,7 +281,8 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
               <DialogTrigger asChild>
                 <Button
                   onClick={openAddDialog}
-                  className="bg-blue-600 hover:bg-blue-700 text-white">
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Tambah Admin
                 </Button>
@@ -265,13 +354,19 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                       required
                     />
                   </div>
+                  {addForm.password && !validatePassword(addForm.password) && (
+                    <p className="text-sm text-red-600 col-span-4">
+                      Password minimal 6 karakter
+                    </p>
+                  )}
                 </div>
                 <DialogFooter>
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setAddDialogOpen(false)}
-                    disabled={isAdding}>
+                    disabled={isAdding}
+                  >
                     Batal
                   </Button>
                   <Button
@@ -282,8 +377,10 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                       !addForm.email ||
                       !addForm.username ||
                       !addForm.password ||
-                      !validateEmail(addForm.email)
-                    }>
+                      !validateEmail(addForm.email) ||
+                      !validatePassword(addForm.password)
+                    }
+                  >
                     {isAdding ? "Menambahkan..." : "Tambah Admin"}
                   </Button>
                 </DialogFooter>
@@ -292,7 +389,7 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
           </div>
 
           {/* Search Filter */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          {/* <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <input
@@ -303,7 +400,7 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-          </div>
+          </div> */}
         </CardHeader>
 
         <CardContent>
@@ -314,13 +411,14 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                   <th className="font-semibold text-left p-3">Email</th>
                   <th className="font-semibold text-left p-3">Username</th>
                   <th className="font-semibold text-left p-3">Password</th>
+                  <th className="font-semibold text-left p-3">Status</th>
                   <th className="font-semibold text-right p-3">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredAdmins.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="text-center py-8 text-gray-500">
+                    <td colSpan={5} className="text-center py-8 text-gray-500">
                       {searchTerm
                         ? "Tidak ada admin yang sesuai dengan pencarian"
                         : "Belum ada admin terdaftar"}
@@ -356,7 +454,8 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                             variant="ghost"
                             size="sm"
                             onClick={() => togglePasswordVisibility(admin.id)}
-                            className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600">
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                          >
                             {showPasswords[admin.id] ? (
                               <EyeOff className="h-3 w-3" />
                             ) : (
@@ -366,19 +465,35 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                         </div>
                       </td>
 
+                      <td className="p-3">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            isDefaultAdmin(admin.email)
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {isDefaultAdmin(admin.email)
+                            ? "Default Admin"
+                            : "Admin"}
+                        </span>
+                      </td>
+
                       <td className="text-right p-3">
                         <div className="flex items-center justify-end gap-2">
                           {/* Edit Button */}
                           <Dialog
                             open={editDialogOpen}
-                            onOpenChange={setEditDialogOpen}>
+                            onOpenChange={setEditDialogOpen}
+                          >
                             <DialogTrigger asChild>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => openEditDialog(admin)}
                                 className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                disabled={isUpdating === admin.id}>
+                                disabled={isUpdating === admin.id}
+                              >
                                 {isUpdating === admin.id ? (
                                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
                                 ) : (
@@ -393,15 +508,16 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                                 <DialogHeader>
                                   <DialogTitle>Edit Admin</DialogTitle>
                                   <DialogDescription>
-                                    Ubah informasi administrator. Kosongkan
-                                    password jika tidak ingin mengubah.
+                                    Ubah informasi administrator. Password wajib
+                                    diisi untuk keamanan.
                                   </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
                                   <div className="grid grid-cols-4 items-center gap-4">
                                     <Label
                                       htmlFor="edit-email"
-                                      className="text-right">
+                                      className="text-right"
+                                    >
                                       Email
                                     </Label>
                                     <Input
@@ -420,7 +536,8 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                                   <div className="grid grid-cols-4 items-center gap-4">
                                     <Label
                                       htmlFor="edit-username"
-                                      className="text-right">
+                                      className="text-right"
+                                    >
                                       Username
                                     </Label>
                                     <Input
@@ -439,7 +556,8 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                                   <div className="grid grid-cols-4 items-center gap-4">
                                     <Label
                                       htmlFor="edit-password"
-                                      className="text-right">
+                                      className="text-right"
+                                    >
                                       Password
                                     </Label>
                                     <Input
@@ -453,15 +571,23 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                                         })
                                       }
                                       className="col-span-3"
-                                      placeholder="Kosongkan jika tidak ingin mengubah"
+                                      placeholder="Masukkan password baru"
+                                      required
                                     />
                                   </div>
+                                  {editForm.password &&
+                                    !validatePassword(editForm.password) && (
+                                      <p className="text-sm text-red-600 col-span-4">
+                                        Password minimal 6 karakter
+                                      </p>
+                                    )}
                                 </div>
                                 <DialogFooter>
                                   <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={() => setEditDialogOpen(false)}>
+                                    onClick={() => setEditDialogOpen(false)}
+                                  >
                                     Batal
                                   </Button>
                                   <Button
@@ -473,8 +599,11 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                                       isUpdating === admin.id ||
                                       !editForm.email ||
                                       !editForm.username ||
-                                      !validateEmail(editForm.email)
-                                    }>
+                                      !editForm.password ||
+                                      !validateEmail(editForm.email) ||
+                                      !validatePassword(editForm.password)
+                                    }
+                                  >
                                     {isUpdating === admin.id
                                       ? "Menyimpan..."
                                       : "Simpan"}
@@ -484,41 +613,55 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
                             )}
                           </Dialog>
 
-                          {/* Delete Button */}
+                          {/* Delete Button - Disabled for default admin */}
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                disabled={isDeleting === admin.id}>
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 disabled:opacity-50"
+                                disabled={
+                                  isDeleting === admin.id ||
+                                  isDefaultAdmin(admin.email)
+                                }
+                              >
                                 {isDeleting === admin.id ? (
                                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
                                 ) : (
                                   <Trash2 className="h-4 w-4" />
                                 )}
-                                <span className="sr-only">Hapus admin</span>
+                                <span className="sr-only">
+                                  {isDefaultAdmin(admin.email)
+                                    ? "Tidak dapat menghapus admin default"
+                                    : "Hapus admin"}
+                                </span>
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Hapus Admin</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Apakah Anda yakin ingin menghapus admin{" "}
-                                  <strong>{admin.username}</strong> (
-                                  {admin.email})? Tindakan ini tidak dapat
-                                  dibatalkan.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Batal</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => deleteAdmin(admin.id)}
-                                  className="bg-red-600 hover:bg-red-700">
-                                  Hapus
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
+
+                            {!isDefaultAdmin(admin.email) && (
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Hapus Admin
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Apakah Anda yakin ingin menghapus admin{" "}
+                                    <strong>{admin.username}</strong> (
+                                    {admin.email})? Tindakan ini tidak dapat
+                                    dibatalkan.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => deleteAdmin(admin.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Hapus
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            )}
                           </AlertDialog>
                         </div>
                       </td>
@@ -529,9 +672,23 @@ export default function AdminTable({ adminData }: { adminData: Admin[] }) {
             </table>
           </div>
 
-          <div className="mt-4 text-sm text-gray-500">
-            Menampilkan {filteredAdmins.length} dari {totalAdmins} admin
-            {searchTerm && " (difilter)"}
+          <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-500">
+              Menampilkan {filteredAdmins.length} dari {totalAdmins} admin
+              {searchTerm && " (difilter)"}
+            </div>
+
+            {/* Additional Info */}
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-yellow-100 rounded-full"></div>
+                <span>Default Admin</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-green-100 rounded-full"></div>
+                <span>Admin Biasa</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
