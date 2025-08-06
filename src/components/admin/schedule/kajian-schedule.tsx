@@ -52,7 +52,6 @@ import {
   getKajian,
 } from "@/utils/kajianServerAction";
 
-/* eslint-disable react/no-unescaped-entities */
 export interface KajianItem {
   id?: string; // Optional for new items
   day: "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu" | "Minggu";
@@ -116,6 +115,7 @@ export function KajianSchedule() {
     resetForm();
     setIsDialogOpen(true);
   };
+
   const handleEdit = (item: KajianItem) => {
     setFormData({
       day: item.day,
@@ -245,6 +245,7 @@ export function KajianSchedule() {
       </div>
     );
   }
+
   return (
     <div className="space-y-6">
       {/* Header with Add Button */}
@@ -305,6 +306,7 @@ export function KajianSchedule() {
                   />
                 </div>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="timeStart">Jam Mulai</Label>
@@ -335,6 +337,7 @@ export function KajianSchedule() {
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="topic">Materi</Label>
                 <Textarea
@@ -347,6 +350,7 @@ export function KajianSchedule() {
                   rows={3}
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="image">Gambar</Label>
                 <Input
@@ -371,6 +375,7 @@ export function KajianSchedule() {
                   </div>
                 )}
               </div>
+
               <div className="flex justify-end gap-2 pt-4">
                 <Button
                   type="button"
@@ -407,7 +412,7 @@ export function KajianSchedule() {
                 <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500">Belum ada jadwal kajian</p>
                 <p className="text-sm text-gray-400">
-                  Klik tombol {"Tambah Kajian"} untuk menambah jadwal
+                  Klik tombol &quot;Tambah Kajian&quot; untuk menambah jadwal
                 </p>
               </div>
             </CardContent>
@@ -425,6 +430,7 @@ export function KajianSchedule() {
                       className="object-cover"
                     />
                   </div>
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
@@ -435,14 +441,17 @@ export function KajianSchedule() {
                             {item.timeStart} - {item.timeEnd} WIB
                           </div>
                         </div>
+
                         <h4 className="font-semibold text-lg text-gray-900 dark:text-white">
                           {item.topic}
                         </h4>
+
                         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
                           <User className="h-3 w-3" />
                           {item.ustaz}
                         </div>
                       </div>
+
                       <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
@@ -452,6 +461,7 @@ export function KajianSchedule() {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
+
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
