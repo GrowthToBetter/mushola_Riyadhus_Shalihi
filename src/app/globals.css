@@ -4,15 +4,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /* TV Display Styles - Fixed 16:9 Canvas */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background: #000;
+  overflow-x: hidden;
+  background: #fff;
   user-select: none;
-  -webkit-user-select: none;  
+  -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 
@@ -28,7 +29,9 @@ html, body {
 }
 
 /* Disable text selection globally */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -43,7 +46,8 @@ html, body {
 }
 
 /* Disable drag and drop */
-img, video {
+img,
+video {
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;
@@ -219,7 +223,7 @@ html {
   /* Fixed dimensions for consistent TV display */
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -228,7 +232,7 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
 
   /* Prevent text selection */
   -webkit-user-select: none;
@@ -259,7 +263,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* TV-optimized text rendering */
@@ -304,7 +308,7 @@ body {
 /* Disable all browser default keyboard shortcuts */
 body {
   -webkit-overflow-scrolling: touch;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Ensure proper aspect ratio for 16:9 displays */
