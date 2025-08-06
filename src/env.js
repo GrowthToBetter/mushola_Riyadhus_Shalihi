@@ -15,6 +15,10 @@ export const env = createEnv({
     BASE_URL: z.string(),
     DEFAULT_ADMIN: z.string().email(),
     DEFAULT_ADMIN_PASSWORD: z.string(),
+    CLOUDINARY_API_KEY: z.string(),
+    CLOUDINARY_API_SECRET: z.string(),
+    CLOUDINARY_NAME: z.string(),
+    CLOUDINARY_URL: z.string().url(),
   },
 
   /**
@@ -33,6 +37,10 @@ export const env = createEnv({
     BASE_URL: process.env.BASE_URL,
     DEFAULT_ADMIN: process.env.DEFAULT_ADMIN,
     DEFAULT_ADMIN_PASSWORD: process.env.DEFAULT_ADMIN_PASSWORD,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    CLOUDINARY_URL: process.env.CLOUDINARY_URL,
   },
 
   /**

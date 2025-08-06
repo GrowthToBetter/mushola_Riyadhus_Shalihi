@@ -76,7 +76,8 @@ export function KajianSchedule() {
     timeStart: "",
     timeEnd: "",
     topic: "",
-    image: "",
+    image: null as File | null,
+    imageUrl: "", // For displaying current image URL when editing
   });
 
   // Fetch kajian data on component mount
@@ -104,7 +105,8 @@ export function KajianSchedule() {
       timeStart: "",
       timeEnd: "",
       topic: "",
-      image: "",
+      image: null,
+      imageUrl: "",
     });
     setEditingItem(null);
   };
@@ -121,12 +123,16 @@ export function KajianSchedule() {
       timeStart: item.timeStart,
       timeEnd: item.timeEnd,
       topic: item.topic,
-      image:
-        item.image ||
-        "https://images.unsplash.com/photo-1578895151671-7d2e2e89dcf7?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      image: null, // File will be uploaded separately if changed
+      imageUrl: item.image || "",
     });
     setEditingItem(item);
     setIsDialogOpen(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData((prev) => ({ ...prev, image: file }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -146,28 +152,31 @@ export function KajianSchedule() {
     setSubmitting(true);
 
     try {
-      const kajianItem: KajianItem = {
-        day: formData.day as
-          | "Senin"
-          | "Selasa"
-          | "Rabu"
-          | "Kamis"
-          | "Jumat"
-          | "Sabtu"
-          | "Minggu",
-        ustaz: formData.ustaz,
-        timeStart: formData.timeStart,
-        timeEnd: formData.timeEnd,
-        topic: formData.topic,
-        image:
-          formData.image ||
-          "https://images.unsplash.com/photo-1578895151671-7d2e2e89dcf7?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      };
+      // Create FormData object
+      const submitData = new FormData();
+      submitData.append("day", formData.day);
+      submitData.append("ustaz", formData.ustaz);
+      submitData.append("timeStart", formData.timeStart);
+      submitData.append("timeEnd", formData.timeEnd);
+      submitData.append("topic", formData.topic);
+
+      // Handle image upload
+      if (formData.image) {
+        submitData.append("image", formData.image);
+      } else {
+        // Create a placeholder file for the server action
+        const placeholderBlob = new Blob([""], { type: "image/jpeg" });
+        const placeholderFile = new File([placeholderBlob], "placeholder.jpg", {
+          type: "image/jpeg",
+        });
+        submitData.append("image", placeholderFile);
+      }
 
       if (editingItem) {
-        // Update existing kajian
-        kajianItem.id = editingItem.id;
-        const updatedKajian = await updateKajian(kajianItem);
+        // For update, you'll need to implement updateKajian to work with FormData
+        // For now, let's assume you have an updateKajian function that accepts FormData and ID
+        submitData.append("id", editingItem.id!);
+        const updatedKajian = await updateKajian(submitData);
 
         // Update local state
         setKajianData((prev) =>
@@ -178,7 +187,7 @@ export function KajianSchedule() {
         toast.success("Jadwal kajian berhasil diperbarui");
       } else {
         // Add new kajian
-        const newKajian = await addKajian(kajianItem);
+        const newKajian = await addKajian(submitData);
 
         // Update local state
         setKajianData((prev) => [...prev, newKajian]);
@@ -343,15 +352,28 @@ export function KajianSchedule() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">URL Gambar (Opsional)</Label>
+                <Label htmlFor="image">Gambar</Label>
                 <Input
                   id="image"
-                  value={formData.image}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, image: e.target.value }))
-                  }
-                  placeholder="https://example.com/image.jpg"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                 />
+                {formData.imageUrl && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 mb-2">
+                      Gambar saat ini:
+                    </p>
+                    <div className="relative w-20 h-16 rounded-lg overflow-hidden bg-gray-100">
+                      <Image
+                        src={formData.imageUrl}
+                        alt="Current image"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
