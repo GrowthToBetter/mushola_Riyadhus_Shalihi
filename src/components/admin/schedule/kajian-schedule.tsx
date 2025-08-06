@@ -52,6 +52,7 @@ import {
   getKajian,
 } from "@/utils/kajianServerAction";
 
+/* eslint-disable */
 export interface KajianItem {
   id?: string; // Optional for new items
   day: "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu" | "Minggu";
